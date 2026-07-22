@@ -1,15 +1,15 @@
 services:
-  gunung-dempo-web:
+  dempo-makmur-web:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: gunung-dempo-web
+    container_name: dempo-makmur-web
     restart: unless-stopped
 
     # ── Tidak ada ports: binding ke host ──────────────────────────────────
     # NPM (Nginx Proxy Manager) di network proxy-net yang handle routing.
     # Tambahkan Proxy Host di NPM:
-    #   Forward Hostname: gunung-dempo-web
+    #   Forward Hostname: dempo-makmur-web
     #   Forward Port:     80
 
     networks:
