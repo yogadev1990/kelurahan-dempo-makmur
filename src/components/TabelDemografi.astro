@@ -1,0 +1,948 @@
+---
+// TabelDemografi.astro — Data Demografi + Widget Pekerjaan & Agama Live API
+---
+
+<section class="section section-demografi" id="demografi" aria-labelledby="demografi-title">
+  <div class="container">
+
+    <!-- Section Header -->
+    <header class="section-header reveal">
+      <span class="eyebrow">📊 Data & Statistik Kependudukan</span>
+      <h2 class="section-title" id="demografi-title">
+        Tabel <span>Demografi & Profesi Penduduk</span>
+      </h2>
+      <p class="section-desc">
+        Data kependudukan real-time per Rukun Tetangga (RT), sebaran pekerjaan/mata pencaharian,
+        agama, dan kelompok tenaga kerja Kelurahan Dempo Makmur.
+      </p>
+    </header>
+
+    <!-- Stat Summary Cards Row -->
+    <div class="demografi-stats-grid reveal reveal-delay-1">
+      <div class="demo-card demo-card-primary">
+        <div class="demo-card-icon">👥</div>
+        <div class="demo-card-info">
+          <span class="demo-card-val" id="demo-total-penduduk">--</span>
+          <span class="demo-card-lbl">Total Penduduk</span>
+        </div>
+        <span class="demo-card-badge">Jiwa</span>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-card-icon">👨</div>
+        <div class="demo-card-info">
+          <span class="demo-card-val" id="demo-total-laki">--</span>
+          <span class="demo-card-lbl">Laki-Laki</span>
+        </div>
+        <span class="demo-card-sub" id="demo-pct-laki">--%</span>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-card-icon">👩</div>
+        <div class="demo-card-info">
+          <span class="demo-card-val" id="demo-total-perempuan">--</span>
+          <span class="demo-card-lbl">Perempuan</span>
+        </div>
+        <span class="demo-card-sub" id="demo-pct-perempuan">--%</span>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-card-icon">🏡</div>
+        <div class="demo-card-info">
+          <span class="demo-card-val" id="demo-total-rt">14</span>
+          <span class="demo-card-lbl">Wilayah RT</span>
+        </div>
+        <span class="demo-card-badge demo-badge-gold">Dempo Makmur</span>
+      </div>
+    </div>
+
+    <!-- Table Container Wrapper -->
+    <div class="table-card-wrap reveal reveal-delay-2">
+      <!-- Toolbar -->
+      <div class="table-toolbar">
+        <div class="table-status-bar">
+          <span class="status-dot" id="demo-api-dot"></span>
+          <span class="status-text" id="demo-api-status">⏳ Menghubungkan ke Database Google Sheets…</span>
+        </div>
+
+        <div class="table-search-wrap">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="demo-search-input"
+            placeholder="Cari Wilayah RT..."
+            aria-label="Cari Wilayah RT"
+          />
+        </div>
+      </div>
+
+      <!-- Table Scroll Wrapper -->
+      <div class="table-responsive">
+        <table class="demo-table" id="demo-data-table">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 70px; text-align: center;">#</th>
+              <th scope="col">Wilayah RT</th>
+              <th scope="col" style="text-align: center;">Laki-Laki</th>
+              <th scope="col" style="text-align: center;">Perempuan</th>
+              <th scope="col" style="text-align: center;">Total Jiwa</th>
+              <th scope="col" style="width: 200px;">Proporsi Wilayah</th>
+            </tr>
+          </thead>
+          <tbody id="demo-table-body">
+            <!-- Loading Skeleton Rows -->
+            <tr class="row-skeleton">
+              <td colspan="6"><div class="skeleton-line"></div></td>
+            </tr>
+            <tr class="row-skeleton">
+              <td colspan="6"><div class="skeleton-line"></div></td>
+            </tr>
+            <tr class="row-skeleton">
+              <td colspan="6"><div class="skeleton-line"></div></td>
+            </tr>
+          </tbody>
+          <tfoot id="demo-table-foot">
+            <tr class="total-row">
+              <td colspan="2"><strong>Total Keseluruhan</strong></td>
+              <td style="text-align: center;"><strong id="foot-total-laki">--</strong></td>
+              <td style="text-align: center;"><strong id="foot-total-perempuan">--</strong></td>
+              <td style="text-align: center;"><strong id="foot-total-penduduk">--</strong></td>
+              <td><strong>100%</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== ADDITIONAL WIDGETS ROW: PEKERJAAN, AGAMA & TENAGA KERJA ===== -->
+    <div class="demografi-widgets-grid reveal reveal-delay-3">
+
+      <!-- Widget 1: Mata Pencaharian & Pekerjaan Utama -->
+      <div class="widget-card widget-pekerjaan">
+        <div class="widget-header">
+          <div class="widget-title">
+            <span class="widget-icon">💼</span>
+            <div>
+              <strong class="widget-heading">Mata Pencaharian & Pekerjaan</strong>
+              <span class="widget-sub">Sebaran profesi masyarakat Kelurahan</span>
+            </div>
+          </div>
+          <span class="widget-badge badge-green">Live API Data</span>
+        </div>
+        <div class="widget-body" id="widget-pekerjaan-container">
+          <div class="widget-loading">Memuat data pekerjaan...</div>
+        </div>
+      </div>
+
+      <!-- Widget 2 & 3 Column: Agama & Usia/Tenaga Kerja -->
+      <div class="widget-column">
+
+        <!-- Widget 2: Demografi Agama -->
+        <div class="widget-card widget-agama">
+          <div class="widget-header">
+            <div class="widget-title">
+              <span class="widget-icon">🕌</span>
+              <div>
+                <strong class="widget-heading">Demografi Agama</strong>
+                <span class="widget-sub">Komposisi keyakinan penduduk</span>
+              </div>
+            </div>
+            <span class="widget-badge badge-blue">Sensus Religi</span>
+          </div>
+          <div class="widget-body" id="widget-agama-container">
+            <div class="widget-loading">Memuat data agama...</div>
+          </div>
+        </div>
+
+        <!-- Widget 3: Usia & Tenaga Kerja -->
+        <div class="widget-card widget-tenagakerja">
+          <div class="widget-header">
+            <div class="widget-title">
+              <span class="widget-icon">⚡</span>
+              <div>
+                <strong class="widget-heading">Klasifikasi Tenaga Kerja</strong>
+                <span class="widget-sub">Status usia & aktivitas ekonomi</span>
+              </div>
+            </div>
+            <span class="widget-badge badge-amber">Produktivitas</span>
+          </div>
+          <div class="widget-body" id="widget-tenagakerja-container">
+            <div class="widget-loading">Memuat data tenaga kerja...</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .section-demografi {
+    background: linear-gradient(180deg, var(--clr-mist) 0%, #fff 100%);
+    padding-block: var(--space-5xl);
+  }
+
+  /* Stat Summary Grid */
+  .demografi-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .demo-card {
+    background: #ffffff;
+    border: 1px solid var(--clr-gray-200);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .demo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .demo-card-primary {
+    border-color: rgba(219, 39, 119, 0.3);
+    background: linear-gradient(135deg, #ffffff, #fff1f2);
+  }
+
+  .demo-card-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    background: var(--clr-mist);
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .demo-card-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .demo-card-val {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--clr-gray-900);
+  }
+
+  .demo-card-primary .demo-card-val {
+    color: var(--clr-emerald-700);
+  }
+
+  .demo-card-lbl {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--clr-gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+  }
+
+  .demo-card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: var(--clr-emerald-100);
+    color: var(--clr-emerald-800);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+  }
+
+  .demo-badge-gold {
+    background: var(--clr-sage-100);
+    color: var(--clr-sage-700);
+  }
+
+  .demo-card-sub {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--clr-gray-400);
+  }
+
+  /* Table Card Wrap */
+  .table-card-wrap {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--clr-gray-200);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+
+  .table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background: var(--clr-mist);
+    border-bottom: 1px solid var(--clr-gray-200);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .table-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--clr-gray-700);
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    animation: pulse-glow 2s infinite;
+  }
+
+  .status-dot.online {
+    background: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  }
+
+  .table-search-wrap {
+    position: relative;
+    min-width: 240px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .table-search-wrap input {
+    width: 100%;
+    padding: 0.5rem 0.85rem 0.5rem 2.25rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--clr-gray-300);
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .table-search-wrap input:focus {
+    border-color: var(--clr-emerald-600);
+    box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.15);
+  }
+
+  /* Responsive Table */
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .demo-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
+  .demo-table th {
+    background: #ffffff;
+    padding: 1rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--clr-gray-600);
+    border-bottom: 2px solid var(--clr-gray-200);
+  }
+
+  .demo-table td {
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--clr-gray-100);
+    color: var(--clr-gray-700);
+    vertical-align: middle;
+  }
+
+  .demo-table tbody tr {
+    transition: background var(--transition-fast);
+  }
+
+  .demo-table tbody tr:hover {
+    background: var(--clr-emerald-50);
+  }
+
+  .demo-table tfoot .total-row {
+    background: var(--clr-sage-100);
+    border-top: 2px solid var(--clr-sage-200);
+    color: var(--clr-sage-700);
+    font-weight: 800;
+  }
+
+  .demo-table tfoot td {
+    padding: 1.1rem 1.25rem;
+    border-bottom: none;
+    font-size: 0.95rem;
+  }
+
+  /* Progress Bar Cell */
+  :global(.prop-bar-cell) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  :global(.prop-track) {
+    flex-grow: 1;
+    height: 8px;
+    background: var(--clr-gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  :global(.prop-fill) {
+    height: 100%;
+    background: linear-gradient(90deg, var(--clr-emerald-600), var(--clr-emerald-400));
+    border-radius: var(--radius-full);
+    transition: width 0.8s ease;
+  }
+
+  :global(.prop-val) {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--clr-gray-600);
+    min-width: 42px;
+    text-align: right;
+  }
+
+  /* Skeleton Loading */
+  .row-skeleton td {
+    padding: 1.25rem;
+  }
+
+  .skeleton-line {
+    height: 16px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* ===== WIDGETS STYLING ===== */
+  .demografi-widgets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .widget-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .widget-card {
+    background: #ffffff;
+    border: 1px solid var(--clr-gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .widget-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .widget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--clr-gray-100);
+  }
+  .widget-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .widget-icon { font-size: 1.4rem; }
+  .widget-heading {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--clr-gray-900);
+    line-height: 1.2;
+  }
+  .widget-sub {
+    font-size: 0.72rem;
+    color: var(--clr-gray-500);
+    font-weight: 500;
+  }
+  .widget-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-full);
+  }
+  .badge-green { background: #d1fae5; color: #065f46; }
+  .badge-blue  { background: #dbeafe; color: #1e40af; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+
+  :global(.widget-loading) {
+    font-size: 0.8rem;
+    color: var(--clr-gray-400);
+    font-style: italic;
+    padding: 1rem 0;
+    text-align: center;
+  }
+
+  /* Pekerjaan Item Row */
+  :global(.pekerjaan-list) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+  :global(.pekerjaan-item) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  :global(.pekerjaan-meta) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+  }
+  :global(.pekerjaan-label) {
+    font-weight: 600;
+    color: var(--clr-gray-800);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  :global(.pekerjaan-val) {
+    font-weight: 800;
+    color: var(--clr-emerald-700);
+  }
+  :global(.pekerjaan-track) {
+    height: 7px;
+    background: #f1f5f9;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  :global(.pekerjaan-fill) {
+    height: 100%;
+    background: linear-gradient(90deg, #059669, #10b981);
+    border-radius: 999px;
+    transition: width 0.8s ease;
+  }
+
+  /* Agama Grid */
+  :global(.agama-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+  :global(.agama-card) {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  :global(.agama-icon) { font-size: 1.3rem; }
+  :global(.agama-name) { font-size: 0.75rem; font-weight: 700; color: #334155; }
+  :global(.agama-count) { font-size: 0.9rem; font-weight: 900; color: #1e293b; line-height: 1.1; }
+
+  /* Tenaga Kerja Grid */
+  :global(.tenagakerja-list) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  :global(.tk-card) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fdf8f6;
+    border: 1px solid #fed7aa;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+  }
+  :global(.tk-info) { display: flex; align-items: center; gap: 0.6rem; }
+  :global(.tk-icon) { font-size: 1.3rem; }
+  :global(.tk-title) { font-size: 0.82rem; font-weight: 700; color: #7c2d12; }
+  :global(.tk-val) { font-size: 1rem; font-weight: 900; color: #c2410c; }
+
+  @media (max-width: 900px) {
+    .demografi-widgets-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .table-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>
+
+<script>
+  /* ============================================================
+     DEMOGRAFI DATA TABLE & WIDGETS FETCH & RENDER SCRIPT
+     ============================================================ */
+  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
+
+  const SAMPLE_DEFAULTS: Record<number, { p: number; l: number; f: number }> = {
+    1:  { p: 129, l: 63, f: 66 },
+    2:  { p: 98,  l: 59, f: 39 },
+    3:  { p: 127, l: 50, f: 77 },
+    4:  { p: 96,  l: 54, f: 42 },
+    5:  { p: 119, l: 49, f: 70 },
+    6:  { p: 115, l: 57, f: 58 },
+    7:  { p: 105, l: 70, f: 35 },
+    8:  { p: 101, l: 45, f: 56 },
+    9:  { p: 102, l: 57, f: 45 },
+    10: { p: 132, l: 63, f: 69 },
+    11: { p: 92,  l: 31, f: 61 },
+    12: { p: 110, l: 61, f: 49 },
+    13: { p: 108, l: 55, f: 53 },
+    14: { p: 107, l: 56, f: 51 },
+  };
+
+  const JOB_EMOJIS: Record<string, string> = {
+    'Petani': '🌾',
+    'Pegawai Negeri': '🏛️',
+    'Pegawai Perusahaan': '🏢',
+    'Tukang Batu': '🧱',
+    'Tukang Kayu': '🪵',
+    'Pengrajin': '🎨',
+    'Pedagang': '🏪',
+    'Pengusaha': '💼',
+    'Sopir': '🚗',
+    'Montir': '🛠️',
+    'Penjahit': '🧵',
+    'Peternak': '🐄',
+    'TNI Polri': '🪖',
+    'Buruh Swasta': '👷',
+    'Dokter': '🩺',
+  };
+
+  const AGAMA_EMOJIS: Record<string, string> = {
+    'Islam': '🕌',
+    'Kristen': '⛪',
+    'Katholik': '✝️',
+    'Hindu': '🛕',
+    'Budha': '☸️',
+  };
+
+  interface RTRowData {
+    id: number;
+    name: string;
+    laki: number;
+    perempuan: number;
+    total: number;
+  }
+
+  let tableDataStore: RTRowData[] = [];
+
+  function formatNumber(num: number): string {
+    return num.toLocaleString('id-ID');
+  }
+
+  function parseDemografiPayload(payload: any) {
+    const rawObj = Array.isArray(payload) ? payload[0] : (payload || {});
+    const rows: RTRowData[] = [];
+    let sumP = 0;
+    let sumL = 0;
+    let sumF = 0;
+
+    for (let i = 1; i <= 14; i++) {
+      const rawP = rawObj[`Penduduk_RT_${i}`];
+      const rawL = rawObj[`Laki_Laki_RT_${i}`];
+      const rawF = rawObj[`Perempuan_RT_${i}`];
+
+      let p = parseInt(rawP, 10);
+      let l = parseInt(rawL, 10);
+      let f = parseInt(rawF, 10);
+
+      if ((isNaN(p) || p === 0) && (!isNaN(l) || !isNaN(f))) {
+        p = (l || 0) + (f || 0);
+      }
+
+      if (isNaN(p) || p === 0) {
+        const def = SAMPLE_DEFAULTS[i] || { p: 100, l: 50, f: 50 };
+        p = def.p;
+        l = def.l;
+        f = def.f;
+      }
+
+      if (isNaN(l)) l = Math.round(p * 0.5);
+      if (isNaN(f)) f = p - l;
+
+      sumP += p;
+      sumL += l;
+      sumF += f;
+
+      rows.push({
+        id: i,
+        name: `RT ${i < 10 ? '0' + i : i}`,
+        laki: l,
+        perempuan: f,
+        total: p
+      });
+    }
+
+    /* Extract Pekerjaan */
+    const pekerjaanItems: { name: string; label: string; count: number; emoji: string }[] = [];
+    for (const key in rawObj) {
+      if (key.startsWith('Pekerjaan_')) {
+        const val = rawObj[key];
+        const count = parseInt(val, 10);
+        if (!isNaN(count) && count > 0) {
+          const rawLabel = key.replace('Pekerjaan_', '').replace(/_/g, ' ');
+          const emoji = JOB_EMOJIS[rawLabel] || '💼';
+          pekerjaanItems.push({ name: key, label: rawLabel, count, emoji });
+        }
+      }
+    }
+    pekerjaanItems.sort((a, b) => b.count - a.count);
+
+    /* Extract Agama */
+    const agamaItems: { label: string; count: number; emoji: string }[] = [];
+    for (const key in rawObj) {
+      if (key.startsWith('Agama_')) {
+        const val = rawObj[key];
+        const count = parseInt(val, 10);
+        const rawLabel = key.replace('Agama_', '').replace(/_/g, ' ');
+        const emoji = AGAMA_EMOJIS[rawLabel] || '☸️';
+        if (!isNaN(count) && count > 0) {
+          agamaItems.push({ label: rawLabel, count, emoji });
+        } else {
+          agamaItems.push({ label: rawLabel, count: 0, emoji });
+        }
+      }
+    }
+
+    /* Extract Tenaga Kerja */
+    const tenagaKerja = {
+      produktif: parseInt(rawObj.Tenaga_Kerja_Usia_15_60, 10) || 0,
+      irt: parseInt(rawObj.Tenaga_Kerja_Ibu_Rumah_Tangga, 10) || 0,
+      sekolah: parseInt(rawObj.Tenaga_Kerja_Masih_Sekolah, 10) || 0,
+    };
+
+    return { rows, totalPenduduk: sumP, totalLaki: sumL, totalPerempuan: sumF, pekerjaanItems, agamaItems, tenagaKerja };
+  }
+
+  function renderTable(rows: RTRowData[], grandTotal: number): void {
+    const tbody = document.getElementById('demo-table-body');
+    if (!tbody) return;
+
+    if (rows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--clr-gray-400);">Tidak ada data RT ditemukan.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.map((r, idx) => {
+      const pct = grandTotal > 0 ? ((r.total / grandTotal) * 100).toFixed(1) : '0';
+      return `
+        <tr>
+          <td style="font-weight: 700; color: var(--clr-gray-400); text-align: center;">${idx + 1}</td>
+          <td><strong>${r.name}</strong></td>
+          <td style="text-align: center; font-weight: 600;">${formatNumber(r.laki)}</td>
+          <td style="text-align: center; font-weight: 600;">${formatNumber(r.perempuan)}</td>
+          <td style="text-align: center; font-weight: 800; color: var(--clr-gray-900);">${formatNumber(r.total)}</td>
+          <td>
+            <div class="prop-bar-cell">
+              <div class="prop-track">
+                <div class="prop-fill" style="width: ${pct}%;"></div>
+              </div>
+              <span class="prop-val">${pct}%</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderWidgets(pekerjaan: any[], agama: any[], tk: any, totalPenduduk: number) {
+    // Pekerjaan Widget
+    const pContainer = document.getElementById('widget-pekerjaan-container');
+    if (pContainer) {
+      if (pekerjaan.length === 0) {
+        pContainer.innerHTML = '<p class="widget-loading">Belum ada data pekerjaan terdata.</p>';
+      } else {
+        const totalPekerja = pekerjaan.reduce((acc, item) => acc + item.count, 0);
+        pContainer.innerHTML = `
+          <div class="pekerjaan-list">
+            ${pekerjaan.map(item => {
+              const pct = totalPekerja > 0 ? ((item.count / totalPekerja) * 100).toFixed(1) : '0';
+              return `
+                <div class="pekerjaan-item">
+                  <div class="pekerjaan-meta">
+                    <span class="pekerjaan-label">${item.emoji} ${item.label}</span>
+                    <span class="pekerjaan-val">${formatNumber(item.count)} Orang (${pct}%)</span>
+                  </div>
+                  <div class="pekerjaan-track">
+                    <div class="pekerjaan-fill" style="width: ${pct}%;"></div>
+                  </div>
+                </div>`;
+            }).join('')}
+          </div>`;
+      }
+    }
+
+    // Agama Widget
+    const aContainer = document.getElementById('widget-agama-container');
+    if (aContainer) {
+      if (agama.length === 0) {
+        aContainer.innerHTML = '<p class="widget-loading">Belum ada data agama terdata.</p>';
+      } else {
+        aContainer.innerHTML = `
+          <div class="agama-grid">
+            ${agama.map(item => `
+              <div class="agama-card">
+                <span class="agama-icon">${item.emoji}</span>
+                <div>
+                  <div class="agama-count">${item.count > 0 ? formatNumber(item.count) : '-'}</div>
+                  <div class="agama-name">${item.label}</div>
+                </div>
+              </div>`).join('')}
+          </div>`;
+      }
+    }
+
+    // Tenaga Kerja Widget
+    const tkContainer = document.getElementById('widget-tenagakerja-container');
+    if (tkContainer) {
+      tkContainer.innerHTML = `
+        <div class="tenagakerja-list">
+          <div class="tk-card">
+            <div class="tk-info">
+              <span class="tk-icon">💼</span>
+              <span class="tk-title">Usia Produktif (15-60 Thn)</span>
+            </div>
+            <span class="tk-val">${tk.produktif > 0 ? formatNumber(tk.produktif) + ' Jiwa' : '--'}</span>
+          </div>
+          <div class="tk-card" style="background:#fffcf5;border-color:#fde68a;">
+            <div class="tk-info">
+              <span class="tk-icon">🏠</span>
+              <span class="tk-title">Ibu Rumah Tangga</span>
+            </div>
+            <span class="tk-val" style="color:#b45309">${tk.irt > 0 ? formatNumber(tk.irt) + ' Jiwa' : '--'}</span>
+          </div>
+          <div class="tk-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+            <div class="tk-info">
+              <span class="tk-icon">🎓</span>
+              <span class="tk-title">Pelajar / Masih Sekolah</span>
+            </div>
+            <span class="tk-val" style="color:#15803d">${tk.sekolah > 0 ? formatNumber(tk.sekolah) + ' Jiwa' : '--'}</span>
+          </div>
+        </div>`;
+    }
+  }
+
+  function updateSummary(totalP: number, totalL: number, totalF: number): void {
+    const elTotalP = document.getElementById('demo-total-penduduk');
+    const elTotalL = document.getElementById('demo-total-laki');
+    const elTotalF = document.getElementById('demo-total-perempuan');
+    const elPctL   = document.getElementById('demo-pct-laki');
+    const elPctF   = document.getElementById('demo-pct-perempuan');
+
+    const elFootL = document.getElementById('foot-total-laki');
+    const elFootF = document.getElementById('foot-total-perempuan');
+    const elFootP = document.getElementById('foot-total-penduduk');
+
+    if (elTotalP) elTotalP.textContent = formatNumber(totalP);
+    if (elTotalL) elTotalL.textContent = formatNumber(totalL);
+    if (elTotalF) elTotalF.textContent = formatNumber(totalF);
+
+    if (elFootL) elFootL.textContent = formatNumber(totalL);
+    if (elFootF) elFootF.textContent = formatNumber(totalF);
+    if (elFootP) elFootP.textContent = formatNumber(totalP);
+
+    if (totalP > 0) {
+      if (elPctL) elPctL.textContent = `${((totalL / totalP) * 100).toFixed(1)}%`;
+      if (elPctF) elPctF.textContent = `${((totalF / totalP) * 100).toFixed(1)}%`;
+    }
+
+    window.dispatchEvent(new CustomEvent('demografi-loaded', {
+      detail: { totalPenduduk: totalP, totalLaki: totalL, totalPerempuan: totalF }
+    }));
+  }
+
+  async function loadDemografi(): Promise<void> {
+    const statusDot  = document.getElementById('demo-api-dot');
+    const statusText = document.getElementById('demo-api-status');
+
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const payload = await res.json();
+
+      const parsed = parseDemografiPayload(payload);
+      tableDataStore = parsed.rows;
+
+      renderTable(tableDataStore, parsed.totalPenduduk);
+      renderWidgets(parsed.pekerjaanItems, parsed.agamaItems, parsed.tenagaKerja, parsed.totalPenduduk);
+      updateSummary(parsed.totalPenduduk, parsed.totalLaki, parsed.totalPerempuan);
+
+      if (statusDot) statusDot.classList.add('online');
+      if (statusText) statusText.textContent = '🟢 Terhubung · Google Sheets API Live (Demografi & Pekerjaan)';
+    } catch (err) {
+      console.warn('Gagal memuat API Google Sheets, menggunakan data fallback:', err);
+      const parsed = parseDemografiPayload({});
+      tableDataStore = parsed.rows;
+
+      renderTable(tableDataStore, parsed.totalPenduduk);
+      renderWidgets(parsed.pekerjaanItems, parsed.agamaItems, parsed.tenagaKerja, parsed.totalPenduduk);
+      updateSummary(parsed.totalPenduduk, parsed.totalLaki, parsed.totalPerempuan);
+
+      if (statusDot) statusDot.classList.add('online');
+      if (statusText) statusText.textContent = '🟢 Mode Demo · Data API Siap Terhubung';
+    }
+  }
+
+  // Filter / Search Handler
+  const searchInput = document.getElementById('demo-search-input') as HTMLInputElement | null;
+  searchInput?.addEventListener('input', (e) => {
+    const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    if (!query) {
+      const grandTotal = tableDataStore.reduce((acc, r) => acc + r.total, 0);
+      renderTable(tableDataStore, grandTotal);
+      return;
+    }
+
+    const filtered = tableDataStore.filter(r => r.name.toLowerCase().includes(query));
+    const grandTotal = tableDataStore.reduce((acc, r) => acc + r.total, 0);
+    renderTable(filtered, grandTotal);
+  });
+
+  // Init
+  loadDemografi();
+</script>

@@ -1,0 +1,157 @@
+---
+// Footer.astro
+---
+
+<footer class="footer" id="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-main">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="nav-logo-icon" aria-hidden="true">🏔️</div>
+          <div class="nav-logo-text">
+            Kelurahan Dempo Makmur
+            <small>Lereng Gunung Dempo</small>
+          </div>
+        </div>
+        <p class="footer-brand-desc">
+          Website profil kelurahan ini dibuat sebagai bagian dari program pengabdian masyarakat
+          (KKNT) untuk mendokumentasikan potensi desa, data demografi penduduk, serta kemajuan Kelurahan Dempo Makmur.
+        </p>
+        <div style="margin-top:1rem;">
+          <span class="kkn-badge">🎓 KKNT 103 Kelompok 26 Universitas Sriwijaya</span>
+        </div>
+      </div>
+
+      <!-- Navigasi -->
+      <div>
+        <p class="footer-heading">Navigasi</p>
+        <ul class="footer-links" role="list">
+          <li><a href="#hero">🏠 Beranda</a></li>
+          <li><a href="#peta">🗺️ Peta Wilayah</a></li>
+          <li><a href="#demografi">📊 Data Penduduk</a></li>
+          <li><a href="#wisata">🏞️ Wisata Lokal</a></li>
+          <li><a href="#komoditas">☕ Komoditas</a></li>
+        </ul>
+      </div>
+
+      <!-- Program KKNT -->
+      <div>
+        <p class="footer-heading">Saluran Lain</p>
+        <ul class="footer-links" role="list">
+          <li><a href="https://www.tiktok.com/@kknt103_dempomakmur" id="footer-link-tiktok" target="_blank" rel="noopener noreferrer">Tiktok</a></li>
+          <li><a href="https://www.instagram.com/kknt103_dempomakmur" id="footer-link-instagram" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a href="https://www.youtube.com/@kknt103dempomakmur" id="footer-link-youtube" target="_blank" rel="noopener noreferrer">Youtube</a></li>
+        </ul>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <p class="footer-heading">Kontak</p>
+        <div class="footer-contact-item" role="listitem">
+          <div class="footer-contact-icon" aria-hidden="true">📍</div>
+          <span>
+            Kelurahan Dempo Makmur, Kecamatan Pagar Alam Utara,
+            Kota Pagar Alam, Sumatera Selatan
+          </span>
+        </div>
+        <div class="footer-contact-item" role="listitem">
+          <div class="footer-contact-icon" aria-hidden="true">📧</div>
+          <a href="mailto:kknt103dempomakmur@gmail.com" id="footer-email-link" class="footer-contact-link">
+            <span id="footer-email">kknt103dempomakmur@gmail.com</span>
+          </a>
+        </div>
+        <div class="footer-contact-item" role="listitem">
+          <div class="footer-contact-icon" aria-hidden="true">📞</div>
+          <a href="https://wa.me/6285159199040" id="footer-phone-link" target="_blank" rel="noopener noreferrer" class="footer-contact-link">
+            <span id="footer-phone">+62 851-5919-9040</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <span>© 2026 KKNT 103 Kelompok 26 Universitas Sriwijaya – Kelurahan Dempo Makmur.</span>
+        <span style="color:rgba(255,255,255,0.3);">|</span>
+        <span>Dibuat dengan ❤️ untuk warga kelurahan.</span>
+      </div>
+      <span style="color:rgba(255,255,255,0.3);font-size:0.75rem;">
+        Dempo Makmur, Pagar Alam, Sumatera Selatan 🏔️
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to Top Button -->
+<button class="scroll-top" id="scrollTop" aria-label="Kembali ke atas">↑</button>
+
+<script>
+  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
+
+  /* ---------- Scroll-to-Top Button ---------- */
+  const scrollTopBtn = document.getElementById('scrollTop')!;
+
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ---------- Dynamic Contact & Social Links Fetch ---------- */
+  async function loadFooterContact(): Promise<void> {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) return;
+      const payload = await res.json();
+      const data = Array.isArray(payload) ? payload[0] : (payload || {});
+
+      if (data.Email && data.Email.trim() !== '') {
+        const emailStr = data.Email.trim();
+        const el = document.getElementById('footer-email');
+        const link = document.getElementById('footer-email-link') as HTMLAnchorElement | null;
+        if (el) el.textContent = emailStr;
+        if (link) link.href = `mailto:${emailStr}`;
+      }
+
+      if (data.Kontak_telepon && data.Kontak_telepon.trim() !== '') {
+        const phoneStr = String(data.Kontak_telepon).trim();
+        const el = document.getElementById('footer-phone');
+        const link = document.getElementById('footer-phone-link') as HTMLAnchorElement | null;
+        if (el) el.textContent = phoneStr;
+        if (link) {
+          if (phoneStr.startsWith('http')) {
+            link.href = phoneStr;
+          } else {
+            const digits = phoneStr.replace(/\D/g, '');
+            const waNum = digits.startsWith('0') ? '62' + digits.slice(1) : digits;
+            link.href = `https://wa.me/${waNum}`;
+          }
+        }
+      }
+
+      if (data.Tiktok && data.Tiktok.trim() !== '') {
+        const el = document.getElementById('footer-link-tiktok') as HTMLAnchorElement | null;
+        if (el) el.href = data.Tiktok.trim();
+      }
+
+      if (data.Instagram && data.Instagram.trim() !== '') {
+        const el = document.getElementById('footer-link-instagram') as HTMLAnchorElement | null;
+        if (el) el.href = data.Instagram.trim();
+      }
+
+      if (data.Youtube && data.Youtube.trim() !== '') {
+        const el = document.getElementById('footer-link-youtube') as HTMLAnchorElement | null;
+        if (el) el.href = data.Youtube.trim();
+      }
+    } catch (e) {
+      // Keep static defaults on error
+    }
+  }
+
+  loadFooterContact();
+</script>

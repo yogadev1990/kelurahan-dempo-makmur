@@ -1,0 +1,599 @@
+---
+// WisataLokal.astro
+
+interface WisataItem {
+  id: string;
+  emoji: string;
+  name: string;
+  desc: string;
+  category: "alam" | "budaya" | "kuliner" | "herbal";
+  highlight: string;
+  badge: string;
+  color: string;         // accent color for glow
+  colorLight: string;    // light tint for bg
+  image: string;         // path to realistic image
+  youtubeUrl?: string;   // opsional: link video YouTube destinasi ini
+}
+
+const wisataList: WisataItem[] = [
+  {
+    id: "wisata-gunung-dempo",
+    emoji: "🏔️",
+    name: "Gunung Dempo",
+    desc: "Gunung berapi aktif setinggi 3.159 mdpl dengan kawah belerang yang indah. Trekking 6–8 jam dari pos pendakian.",
+    category: "alam",
+    highlight: "3.159 mdpl",
+    badge: "🌋 Alam",
+    color: "rgba(16,185,129,0.5)",
+    colorLight: "rgba(16,185,129,0.08)",
+    image: "/images/wisata_gunung_dempo.png",
+    youtubeUrl: "https://www.youtube.com/results?search_query=pendakian+gunung+dempo",
+  },
+  {
+    id: "wisata-kebun-teh",
+    emoji: "🍵",
+    name: "Kebun Teh Lereng Dempo",
+    desc: "Hamparan hijau perkebunan teh membentang luas di lereng gunung, menghasilkan teh premium khas dataran tinggi.",
+    category: "alam",
+    highlight: "±1.500 ha",
+    badge: "🌿 Perkebunan",
+    color: "rgba(52,211,153,0.5)",
+    colorLight: "rgba(52,211,153,0.08)",
+    image: "/images/wisata_kebun_teh.png",
+    youtubeUrl: "https://www.youtube.com/results?search_query=kebun+teh+pagar+alam",
+  },
+  {
+    id: "wisata-kopi",
+    emoji: "☕",
+    name: "Agrowisata Kopi Dempo",
+    desc: "Kunjungi kebun kopi robusta dari proses pemetikan, pengolahan basah, hingga roasting dan cicip langsung bersama petani.",
+    category: "kuliner",
+    highlight: "±934 ha",
+    badge: "☕ Kuliner",
+    color: "rgba(196,127,62,0.5)",
+    colorLight: "rgba(196,127,62,0.08)",
+    image: "/images/wisata_kopi.png",
+    youtubeUrl: "https://www.youtube.com/results?search_query=agrowisata+kopi+dempo+pagar+alam",
+  },
+  {
+    id: "wisata-toga",
+    emoji: "🌿",
+    name: "Kebun TOGA Warga",
+    desc: "Jelajahi kebun tanaman obat keluarga milik warga yang kaya kearifan lokal",
+    category: "herbal",
+    highlight: "30+ Jenis Tanaman",
+    badge: "💊 Herbal",
+    color: "rgba(106,155,120,0.5)",
+    colorLight: "rgba(106,155,120,0.08)",
+    image: "/images/wisata_toga.png",
+  },
+  {
+    id: "wisata-paralayang",
+    emoji: "🪂",
+    name: "Paralayang Gunung Dempo",
+    desc: "Lokasi paralayang dengan pemandangan kebun teh dan kota pagar alam dari ketinggian.",
+    category: "alam",
+    highlight: "Pemandangan Gunung Dempo",
+    badge: "🪂 Alam",
+    color: "rgba(56,189,248,0.5)",
+    colorLight: "rgba(56,189,248,0.07)",
+    image: "/images/wisata_paralayang.png",
+    youtubeUrl: "https://www.youtube.com/results?search_query=paralayang+gunung+dempo",
+  },
+  {
+    id: "wisata-tradisi",
+    emoji: "🥁",
+    name: "Tradisi & Seni Lokal",
+    desc: "Festival panen dan pertunjukan kesenian tradisional warga Gunung Dempo yang memperkenalkan budaya Besemah yang kaya.",
+    category: "budaya",
+    highlight: "Budaya Besemah",
+    badge: "🎭 Budaya",
+    color: "rgba(251,146,60,0.5)",
+    colorLight: "rgba(251,146,60,0.07)",
+    image: "/images/wisata_budaya.png",
+  },
+];
+
+const categoryColors: Record<string, string> = {
+  alam:    "var(--clr-emerald-400)",
+  kuliner: "#e8a43c",
+  herbal:  "var(--clr-sage-400)",
+  budaya:  "#fb923c",
+};
+---
+
+<!-- Subtle wave in -->
+<div class="wave-divider-wisata-in" aria-hidden="true">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C480,60 960,0 1440,40 L1440,60 L0,60 Z" fill="var(--clr-mist)"/>
+  </svg>
+</div>
+
+<section class="section section-wisata" id="wisata" aria-labelledby="wisata-title">
+
+  <!-- Decorative background accents -->
+  <div class="wisata-bg-accent wisata-bg-1" aria-hidden="true"></div>
+  <div class="wisata-bg-accent wisata-bg-2" aria-hidden="true"></div>
+  <span class="wisata-watermark" aria-hidden="true">WISATA</span>
+
+  <div class="container" style="position:relative;z-index:2;">
+
+    <!-- Header -->
+    <header class="section-header reveal">
+      <span class="eyebrow">🗺️ Wisata & Kearifan Lokal</span>
+      <h2 class="section-title" id="wisata-title">
+        Destinasi <span>Wisata Dempo Makmur</span>
+      </h2>
+      <p class="section-desc">
+        Dari puncak gunung berapi hingga ladang herbal dan tradisi budaya Besemah —
+        Kelurahan Dempo Makmur menawarkan pengalaman wisata autentik yang tak terlupakan.
+      </p>
+    </header>
+
+    <!-- Filter tabs -->
+    <div class="wisata-filters reveal reveal-delay-1" role="group" aria-label="Filter kategori wisata">
+      <button class="wf-btn active" data-filter="all" id="filter-all">Semua</button>
+      <button class="wf-btn" data-filter="alam"    id="filter-alam">🌿 Alam</button>
+      <button class="wf-btn" data-filter="kuliner" id="filter-kuliner">☕ Kuliner</button>
+      <button class="wf-btn" data-filter="herbal"  id="filter-herbal">💊 Herbal</button>
+      <button class="wf-btn" data-filter="budaya"  id="filter-budaya">🎭 Budaya</button>
+    </div>
+
+    <!-- Wisata Cards Grid -->
+    <div class="wisata-grid" id="wisata-grid" role="list">
+      {wisataList.map((item, i) => (
+        <article
+          class={`wisata-card reveal reveal-delay-${(i % 5) + 1}`}
+          id={item.id}
+          data-category={item.category}
+          role="listitem"
+          style={`--card-glow:${item.color};--card-bg:${item.colorLight};`}
+        >
+          <!-- Top accent bar -->
+          <div class="wisata-card-accent" style={`background:${item.color};`}></div>
+
+          <!-- Card image / emoji area -->
+          <div class="wisata-card-visual" aria-hidden="true">
+            <img src={item.image} alt={item.name} class="wisata-img" loading="lazy" />
+            <span class="wisata-badge">{item.badge}</span>
+          </div>
+
+          <!-- Content -->
+          <div class="wisata-card-content">
+            <h3 class="wisata-card-title">{item.name}</h3>
+            <p class="wisata-card-desc">{item.desc}</p>
+
+            <div class="wisata-card-footer">
+              <span class="wisata-highlight">📍 {item.highlight}</span>
+              {item.youtubeUrl && (
+                <a
+                  href={item.youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="wisata-yt-btn"
+                  aria-label={`Tonton video ${item.name} di YouTube`}
+                >
+                  <svg width="14" height="10" viewBox="0 0 20 14" fill="none" aria-hidden="true">
+                    <path d="M19.582 2.186a2.5 2.5 0 0 0-1.76-1.768C16.254 0 10 0 10 0S3.746 0 2.178.418A2.5 2.5 0 0 0 .418 2.186C0 3.763 0 7 0 7s0 3.237.418 4.814a2.5 2.5 0 0 0 1.76 1.768C3.746 14 10 14 10 14s6.254 0 7.822-.418a2.5 2.5 0 0 0 1.76-1.768C20 10.237 20 7 20 7s0-3.237-.418-4.814zM8 10V4l5.196 3L8 10z" fill="currentColor"/>
+                  </svg>
+                  Tonton Video
+                </a>
+              )}
+            </div>
+          </div>
+
+          <!-- Hover glow overlay -->
+          <div class="wisata-card-glow" aria-hidden="true"></div>
+        </article>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
+
+  /* -------- Filter Tabs -------- */
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.wf-btn');
+  const wisataCards = document.querySelectorAll<HTMLElement>('.wisata-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter ?? 'all';
+
+      // Update active button
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Filter cards
+      wisataCards.forEach(card => {
+        const cat = card.dataset.category ?? '';
+        const show = filter === 'all' || cat === filter;
+        card.style.display = show ? '' : 'none';
+        if (show) {
+          // Re-trigger reveal animation
+          card.classList.remove('visible');
+          setTimeout(() => card.classList.add('visible'), 50);
+        }
+      });
+    });
+  });
+
+  /* -------- Dynamic API Data Fetch for Wisata -------- */
+  async function loadWisataData(): Promise<void> {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) return;
+      const payload = await res.json();
+      const data = Array.isArray(payload) ? payload[0] : (payload || {});
+
+      const itemKeys = [
+        "wisata-gunung-dempo",
+        "wisata-kebun-teh",
+        "wisata-kopi",
+        "wisata-toga",
+        "wisata-paralayang",
+        "wisata-tradisi"
+      ];
+
+      itemKeys.forEach(key => {
+        const cardEl = document.getElementById(key);
+        if (!cardEl) return;
+
+        const nameVal      = data[`${key}_name`];
+        const descVal      = data[`${key}_desc`];
+        const categoryVal  = data[`${key}_category`];
+        const highlightVal = data[`${key}_highlight`];
+        const badgeVal     = data[`${key}_badge`];
+        const ytUrlVal     = data[`${key}_youtubeUrl`];
+
+        if (nameVal && nameVal.trim() !== '') {
+          const el = cardEl.querySelector('.wisata-card-title');
+          if (el) el.textContent = nameVal;
+        }
+        if (descVal && descVal.trim() !== '') {
+          const el = cardEl.querySelector('.wisata-card-desc');
+          if (el) el.textContent = descVal;
+        }
+        if (highlightVal && highlightVal.trim() !== '') {
+          const el = cardEl.querySelector('.wisata-highlight');
+          if (el) el.textContent = `📍 ${highlightVal}`;
+        }
+        if (badgeVal && badgeVal.trim() !== '') {
+          const el = cardEl.querySelector('.wisata-badge');
+          if (el) el.textContent = badgeVal;
+        }
+        if (categoryVal && categoryVal.trim() !== '') {
+          cardEl.dataset.category = categoryVal.trim();
+        }
+        if (ytUrlVal && ytUrlVal.trim() !== '') {
+          const el = cardEl.querySelector('.wisata-yt-btn') as HTMLAnchorElement | null;
+          if (el) el.href = ytUrlVal;
+        }
+      });
+    } catch (e) {
+      // Keep static defaults on error
+    }
+  }
+
+  loadWisataData();
+
+  /* -------- Scroll Reveal -------- */
+  const revEls = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('visible'); });
+  }, { threshold: 0.10 });
+  revEls.forEach(el => obs.observe(el));
+</script>
+
+<style>
+  /* =========================================================
+     WISATA LOKAL SECTION
+  ========================================================= */
+
+  /* Wave in */
+  .wave-divider-wisata-in {
+    display: block;
+    line-height: 0;
+    background: var(--clr-white);
+  }
+  .wave-divider-wisata-in svg { width: 100%; display: block; }
+
+  /* ===== Section base ===== */
+  .section-wisata {
+    background: var(--clr-mist);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Background decorative accents */
+  .wisata-bg-accent {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(100px);
+    opacity: 0.5;
+  }
+  .wisata-bg-1 {
+    width: 500px; height: 500px;
+    top: -150px; right: -100px;
+    background: radial-gradient(circle, var(--clr-sage-100), transparent);
+  }
+  .wisata-bg-2 {
+    width: 400px; height: 400px;
+    bottom: -100px; left: -100px;
+    background: radial-gradient(circle, var(--clr-coffee-50), transparent);
+  }
+
+  /* Watermark text */
+  .wisata-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(6rem, 15vw, 12rem);
+    font-weight: 900;
+    color: rgba(106,155,120,0.04);
+    pointer-events: none;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* ===== Filter buttons ===== */
+  .wisata-filters {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: var(--space-2xl);
+  }
+  .wf-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: var(--font-body);
+    border: 1.5px solid var(--clr-gray-200);
+    background: var(--clr-white);
+    color: var(--clr-gray-600);
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+  .wf-btn:hover {
+    border-color: var(--clr-emerald-500);
+    color: var(--clr-emerald-700);
+    background: var(--clr-emerald-50);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  .wf-btn.active {
+    background: linear-gradient(135deg, var(--clr-emerald-700), var(--clr-emerald-500));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.35);
+  }
+
+  /* ===== Grid ===== */
+  .wisata-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  /* ===== Wisata Card ===== */
+  .wisata-card {
+    background: var(--clr-white);
+    border: 1px solid var(--clr-gray-200);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: default;
+    transition:
+      transform var(--transition-bounce),
+      box-shadow var(--transition-base),
+      border-color var(--transition-base);
+  }
+  .wisata-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 24px 60px var(--card-glow, rgba(16,185,129,0.2));
+    border-color: transparent;
+  }
+
+  /* Top accent bar */
+  .wisata-card-accent {
+    height: 4px;
+    width: 100%;
+    opacity: 0.8;
+  }
+
+  /* Visual image area */
+  .wisata-card-visual {
+    background: #f1f5f9;
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wisata-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-bounce, 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275));
+    display: block;
+  }
+  .wisata-card:hover .wisata-img {
+    transform: scale(1.1);
+  }
+
+  .wisata-badge {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.7rem;
+    border-radius: var(--radius-full);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px);
+    color: var(--clr-gray-700);
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* Card content */
+  .wisata-card-content {
+    padding: var(--space-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .wisata-card-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--clr-gray-800);
+    line-height: 1.3;
+  }
+  .wisata-card-desc {
+    font-size: 0.83rem;
+    color: var(--clr-gray-500);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  /* Card footer */
+  .wisata-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-top: auto;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--clr-gray-100);
+    flex-wrap: wrap;
+  }
+  .wisata-highlight {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--clr-gray-500);
+  }
+  .wisata-yt-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #FF0000;
+    background: rgba(255,0,0,0.07);
+    border: 1px solid rgba(255,0,0,0.15);
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-full);
+    transition: all var(--transition-base);
+    white-space: nowrap;
+  }
+  .wisata-yt-btn:hover {
+    background: #FF0000;
+    color: white;
+    box-shadow: 0 4px 14px rgba(255,0,0,0.35);
+    transform: translateY(-1px);
+  }
+
+  /* Hover glow overlay */
+  .wisata-card-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-xl);
+    opacity: 0;
+    background: radial-gradient(circle at 50% 0%, var(--card-glow, transparent), transparent 70%);
+    transition: opacity var(--transition-base);
+    pointer-events: none;
+  }
+  .wisata-card:hover .wisata-card-glow { opacity: 1; }
+
+  /* ===== Kearifan Lokal Banner ===== */
+  .kearifan-banner {
+    margin-top: var(--space-3xl);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, var(--clr-emerald-950), var(--clr-emerald-900) 60%, var(--clr-coffee-900));
+    padding: var(--space-3xl);
+    box-shadow: var(--shadow-xl);
+  }
+  .kearifan-banner-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 50%, rgba(16,185,129,0.15), transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(196,127,62,0.12), transparent 50%);
+    pointer-events: none;
+  }
+  .kearifan-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  .kearifan-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+    animation: float 5s ease-in-out infinite;
+  }
+  .kearifan-title {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-weight: 800;
+    color: white;
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+  .kearifan-desc {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.70);
+    line-height: 1.7;
+    max-width: 56ch;
+  }
+  .kearifan-pills {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+  }
+  .k-pill {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--clr-emerald-300);
+    background: rgba(16,185,129,0.12);
+    border: 1px solid rgba(16,185,129,0.25);
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    text-align: center;
+    transition: background var(--transition-base), transform var(--transition-bounce);
+  }
+  .k-pill:hover {
+    background: rgba(16,185,129,0.22);
+    transform: translateX(4px);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 960px) {
+    .wisata-grid { grid-template-columns: repeat(2, 1fr); }
+    .kearifan-content { grid-template-columns: auto 1fr; }
+    .kearifan-pills { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; }
+  }
+
+  @media (max-width: 600px) {
+    .wisata-grid { grid-template-columns: 1fr; }
+    .kearifan-banner { padding: var(--space-xl); }
+    .kearifan-content { grid-template-columns: 1fr; text-align: center; }
+    .kearifan-icon { margin: 0 auto; }
+    .k-pill { flex: 1 0 auto; }
+  }
+</style>

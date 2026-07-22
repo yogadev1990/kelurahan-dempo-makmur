@@ -1,0 +1,83 @@
+---
+// Navbar.astro
+---
+
+<nav class="navbar" id="navbar" role="navigation" aria-label="Navigasi utama">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo" aria-label="Beranda">
+      <div class="nav-logo-icon" aria-hidden="true">🏔️</div>
+      <div class="nav-logo-text">
+        Kelurahan Dempo Makmur
+        <small>Program KKNT · Profil Kelurahan</small>
+      </div>
+    </a>
+
+    <ul class="nav-links" id="nav-links" role="list">
+      <li><a href="#hero">Beranda</a></li>
+      <li><a href="#media">Dokumenter</a></li>
+      <li><a href="#peta">Peta Wilayah</a></li>
+      <li><a href="#demografi">Data Penduduk</a></li>
+      <li><a href="#wisata">Wisata</a></li>
+      <li><a href="#komoditas">Komoditas</a></li>
+      <li><a href="#footer" class="nav-cta">Hubungi Kami</a></li>
+    </ul>
+
+    <button
+      class="hamburger"
+      id="hamburger"
+      aria-label="Buka menu"
+      aria-expanded="false"
+      aria-controls="nav-links"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<script>
+  /* ---------- Navbar Scroll ---------- */
+  const navbar = document.getElementById('navbar')!;
+
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  /* ---------- Hamburger Toggle ---------- */
+  const hamburger = document.getElementById('hamburger')!;
+  const navWrapper = document.querySelector('.navbar')!;
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = navWrapper.classList.toggle('nav-mobile-open');
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    hamburger.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
+  });
+
+  // Close on nav link click
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      navWrapper.classList.remove('nav-mobile-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Buka menu');
+    });
+  });
+
+  /* ---------- Smooth Active Nav Link Highlight ---------- */
+  const sections = document.querySelectorAll('section[id], footer[id]');
+  const navLinksAll = document.querySelectorAll('.nav-links a');
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navLinksAll.forEach(link => {
+          (link as HTMLElement).style.color = '';
+          if (link.getAttribute('href') === `#${id}`) {
+            (link as HTMLElement).style.color = 'var(--clr-emerald-700)';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => sectionObserver.observe(s));
+</script>

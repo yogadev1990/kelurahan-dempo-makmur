@@ -1,0 +1,120 @@
+---
+// Komoditas.astro
+---
+
+<!-- Wave Divider (from toga to komoditas) -->
+<div class="wave-divider" aria-hidden="true" style="background:var(--clr-mist);">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,0 C480,60 960,0 1440,40 L1440,60 L0,60 Z" fill="var(--clr-gray-800)"/>
+  </svg>
+</div>
+
+<section class="section section-komoditas" id="komoditas" aria-labelledby="komoditas-title">
+  <div class="container" style="position:relative;z-index:1;">
+
+    <header class="section-header">
+      <span
+        class="eyebrow"
+        style="background:rgba(160,98,42,0.2);color:var(--clr-coffee-300);"
+      >
+        ☕ Komoditas Unggulan
+      </span>
+      <h2 class="section-title" id="komoditas-title">
+        Kekayaan Bumi <span>Dempo Makmur</span>
+      </h2>
+      <p class="section-desc" style="color:rgba(255,255,255,0.65);">
+        Dua komoditas andalan yang menjadi tulang punggung perekonomian dan identitas
+        kelurahan Dempo Makmur.
+      </p>
+    </header>
+
+    <div class="komoditas-grid">
+
+      <article class="komoditas-card reveal reveal-delay-1" id="komoditas-kopi">
+        <span class="komoditas-emoji" aria-hidden="true">☕</span>
+        <h3 class="komoditas-name" id="komoditas-name-1">Kopi Dempo</h3>
+        <p class="komoditas-desc" id="komoditas-desc-1">
+          Ditanam di ketinggian 1.000–1.600 mdpl, kopi Dempo dikenal dengan cita rasa
+          earthy, full body, dan sedikit cokelat alami yang khas.
+        </p>
+        <div class="komoditas-stat" id="komoditas-stat-1">±934 ha</div>
+        <div class="komoditas-stat-label">Luas Lahan Kopi</div>
+      </article>
+
+      <article class="komoditas-card reveal reveal-delay-2" id="komoditas-teh">
+        <span class="komoditas-emoji" aria-hidden="true">🍵</span>
+        <h3 class="komoditas-name" id="komoditas-name-2">Teh Pegunungan</h3>
+        <p class="komoditas-desc" id="komoditas-desc-2">
+          Perkebunan teh membentang di lereng Gunung Dempo, menghasilkan teh premium
+          dengan aroma segar pegunungan dan kandungan antioksidan tinggi.
+        </p>
+        <div class="komoditas-stat" id="komoditas-stat-2">±1500 ha</div>
+        <div class="komoditas-stat-label">Luas Lahan Teh</div>
+      </article>
+
+      <article class="komoditas-card reveal reveal-delay-3" id="komoditas-toga-prod">
+        <span class="komoditas-emoji" aria-hidden="true">🌿</span>
+        <h3 class="komoditas-name" id="komoditas-name-3">Produk Olahan TOGA</h3>
+        <p class="komoditas-desc" id="komoditas-desc-3">
+          Inisiatif KKNT 103 Kelompok 26 membantu warga mengolah tanaman TOGA menjadi
+          minuman herbal, dan produk herbal yang siap dipasarkan.
+        </p>
+        <div class="komoditas-stat" id="komoditas-stat-3">3 Jenis</div>
+        <div class="komoditas-stat-label">Produk Unggulan TOGA</div>
+      </article>
+
+    </div>
+
+    <!-- Coffee & Tea Banner Image -->
+    <div
+      class="reveal"
+      style="margin-top:3rem;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);max-height:260px;"
+    >
+      <img
+        src="/images/coffee_tea.png"
+        alt="Biji kopi robusta dan daun teh hijau khas Gunung Dempo"
+        style="width:100%;height:260px;object-fit:cover;object-position:center;"
+        loading="lazy"
+        width="1200"
+        height="400"
+      />
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
+
+  async function loadKomoditasData(): Promise<void> {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) return;
+      const payload = await res.json();
+      const data = Array.isArray(payload) ? payload[0] : (payload || {});
+
+      for (let i = 1; i <= 3; i++) {
+        const nameVal = data[`Komoditas_${i}`];
+        const descVal = data[`Deskripsi_Komoditas_${i}`];
+        const statVal = data[`Luas_Komoditas_${i}`];
+
+        if (nameVal && nameVal.trim() !== '') {
+          const elName = document.getElementById(`komoditas-name-${i}`);
+          if (elName) elName.textContent = nameVal;
+        }
+        if (descVal && descVal.trim() !== '') {
+          const elDesc = document.getElementById(`komoditas-desc-${i}`);
+          if (elDesc) elDesc.textContent = descVal;
+        }
+        if (statVal && statVal.trim() !== '') {
+          const elStat = document.getElementById(`komoditas-stat-${i}`);
+          if (elStat) elStat.textContent = statVal;
+        }
+      }
+    } catch (e) {
+      // Keep static defaults on error
+    }
+  }
+
+  loadKomoditasData();
+</script>

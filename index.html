@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Profil Desa di kaki Gunung Dempo – menampilkan potensi lokal, pertanian kopi & teh, serta data kesehatan masyarakat hasil program KKN." />
+  <meta name="keywords" content="desa gunung dempo, KKN, profil desa, toga, stunting, kopi, teh, pagar alam" />
+  <meta property="og:title" content="Profil Desa – Lereng Gunung Dempo" />
+  <meta property="og:description" content="Harmoni Alam, Kopi, dan Teh di Kaki Gunung Dempo." />
+  <meta property="og:type" content="website" />
+  <title>Profil Desa – Lereng Gunung Dempo</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<nav class="navbar" id="navbar" role="navigation" aria-label="Navigasi utama">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo" aria-label="Beranda">
+      <div class="nav-logo-icon" aria-hidden="true">🏔️</div>
+      <div class="nav-logo-text">
+        Desa Gunung Dempo
+        <small>Program KKN · Profil Desa</small>
+      </div>
+    </a>
+
+    <ul class="nav-links" id="nav-links" role="list">
+      <li><a href="#hero">Beranda</a></li>
+      <li><a href="#sehat">Desa Sehat</a></li>
+      <li><a href="#toga">Potensi Toga</a></li>
+      <li><a href="#komoditas">Komoditas</a></li>
+      <li><a href="#footer" class="nav-cta">Hubungi Kami</a></li>
+    </ul>
+
+    <button class="hamburger" id="hamburger" aria-label="Buka menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO SECTION
+     ============================================================ -->
+<section class="hero" id="hero" aria-label="Selamat Datang">
+
+  <!-- Background -->
+  <div class="hero-bg" aria-hidden="true">
+    <img
+      src="assets/images/hero_bg.png"
+      alt="Perkebunan teh dan pemandangan Gunung Dempo yang megah"
+      width="1920"
+      height="1080"
+    />
+  </div>
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <!-- Floating Particles -->
+  <div class="hero-particles" aria-hidden="true">
+    <div class="particle" style="width:80px;height:80px;top:20%;left:10%;--dur:9s;--delay:0s;"></div>
+    <div class="particle" style="width:50px;height:50px;top:60%;left:80%;--dur:7s;--delay:2s;"></div>
+    <div class="particle" style="width:120px;height:120px;top:35%;left:55%;--dur:11s;--delay:1s;opacity:.5"></div>
+    <div class="particle" style="width:40px;height:40px;top:75%;left:25%;--dur:8s;--delay:3s;"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="hero-content container">
+    <div class="hero-inner">
+
+      <!-- Text Column -->
+      <div class="hero-text-col">
+        <div class="hero-badge-top" aria-label="Program KKN">
+          <span>🎓</span> Program KKN Universitas 2025
+        </div>
+
+        <h1 class="hero-title">
+          Selamat Datang di<br/>
+          <span class="desa-name">Desa Ujan Mas Atas</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Harmoni Alam, Kopi, dan Teh di Kaki Gunung Dempo.<br/>
+          Mengabdi bersama, tumbuh bersama, menuju desa sehat dan berdaya.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#sehat" class="btn btn-primary" id="btn-explore-sehat">
+            🌿 Jelajahi Desa
+          </a>
+          <a href="#toga" class="btn btn-outline" id="btn-explore-toga">
+            🗺️ Peta Potensi
+          </a>
+        </div>
+      </div>
+
+      <!-- Floating Achievement Badge Card -->
+      <div class="hero-badge-card" role="complementary" aria-label="Prestasi desa: Zero Stunting">
+        <div class="badge-icon-wrap" aria-hidden="true">🛡️</div>
+        <p class="badge-prestasi">Prestasi Desa</p>
+        <p class="badge-title">100% Bebas Stunting</p>
+        <span class="badge-pill">Zero Stunting ✓</span>
+        <p style="font-size:0.72rem;color:rgba(255,255,255,0.6);margin-top:0.75rem;line-height:1.5;">
+          Seluruh balita terpantau<br/>dan tumbuh sehat
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="hero-stats-bar" role="region" aria-label="Statistik Desa">
+    <div class="hero-stats-inner container">
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="stat-penduduk">1.240</span>
+        <span class="hero-stat-label">Jiwa Penduduk</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="stat-rw">4 RW</span>
+        <span class="hero-stat-label">Rukun Warga</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="stat-stunting">0%</span>
+        <span class="hero-stat-label">Angka Stunting</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="stat-komoditas">2</span>
+        <span class="hero-stat-label">Komoditas Unggulan</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider" aria-hidden="true">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill="#ffffff"/>
+  </svg>
+</div>
+
+<!-- ============================================================
+     DESA SEHAT SECTION
+     ============================================================ -->
+<section class="section section-sehat" id="sehat" aria-labelledby="sehat-title">
+  <div class="container">
+
+    <header class="section-header">
+      <span class="eyebrow reveal">🏥 Desa Sehat</span>
+      <h2 class="section-title reveal" id="sehat-title">
+        Data <span>Kesehatan</span> Masyarakat
+      </h2>
+      <p class="section-desc reveal">
+        Hasil survei dan pendataan lapangan program KKN menggambarkan kondisi kesehatan warga Desa Ujan Mas Atas yang semakin baik.
+      </p>
+    </header>
+
+    <div class="health-grid">
+
+      <!-- Card 1: Kesehatan Gigi & Mulut -->
+      <article class="health-card reveal reveal-delay-1" id="card-gigi"
+               style="--card-accent: linear-gradient(90deg, #059669, #34d399);">
+        <div class="health-card-icon" style="--icon-bg: #d1fae5;" aria-hidden="true">🦷</div>
+        <p class="health-card-eyebrow">Kesehatan Gigi &amp; Mulut</p>
+        <h3 class="health-card-title">Kebiasaan Sikat Gigi Warga</h3>
+
+        <div class="pictogram-row" role="img" aria-label="8 dari 10 warga sudah sikat gigi 2 kali sehari">
+          <!-- 8 aktif, 2 abu-abu -->
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" title="Sikat gigi rutin">😁</span>
+          <span class="pictogram-item" style="opacity:0.25;" title="Belum rutin">😶</span>
+          <span class="pictogram-item" style="opacity:0.25;" title="Belum rutin">😶</span>
+        </div>
+
+        <p class="pictogram-label">
+          <strong>8 dari 10</strong> warga sudah sikat gigi 2× sehari (pagi &amp; malam).
+        </p>
+
+        <!-- Progress Bar -->
+        <div style="margin-top:1rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--clr-gray-400);margin-bottom:0.35rem;">
+            <span>Rutin Sikat Gigi</span><span>80%</span>
+          </div>
+          <div class="rw-progress-bar">
+            <div class="rw-progress-fill" data-width="80%"></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Sanitasi -->
+      <article class="health-card reveal reveal-delay-2" id="card-sanitasi"
+               style="--card-accent: linear-gradient(90deg, #0284c7, #38bdf8);">
+        <div class="health-card-icon" style="--icon-bg: #e0f2fe;" aria-hidden="true">🚿</div>
+        <p class="health-card-eyebrow">Sanitasi &amp; Lingkungan</p>
+        <h3 class="health-card-title">Fasilitas Jamban &amp; Sanitasi Bersih</h3>
+
+        <div class="pct-ring-wrap">
+          <!-- SVG Ring Chart -->
+          <svg class="pct-ring" viewBox="0 0 90 90" role="img" aria-label="90% rumah memiliki jamban sehat">
+            <circle cx="45" cy="45" r="36" fill="none" stroke="#e0f2fe" stroke-width="9"/>
+            <circle cx="45" cy="45" r="36" fill="none" stroke="#0284c7" stroke-width="9"
+                    stroke-dasharray="226.2" stroke-dashoffset="22.6"
+                    stroke-linecap="round"
+                    transform="rotate(-90 45 45)"
+                    style="transition: stroke-dashoffset 1.5s ease;"/>
+            <text x="45" y="50" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">90%</text>
+          </svg>
+          <div class="pct-ring-text">
+            <div class="pct-ring-value" style="color:#0284c7;">90%</div>
+            <div class="pct-ring-desc">Rumah tangga memiliki jamban sehat &amp; akses air bersih yang layak.</div>
+          </div>
+        </div>
+
+        <!-- Pictogram houses -->
+        <div class="pictogram-row" role="img" aria-label="9 dari 10 rumah memiliki sanitasi baik" style="margin-top:0.75rem;">
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item">🏠</span>
+          <span class="pictogram-item" style="opacity:0.25;">🏚️</span>
+        </div>
+      </article>
+
+      <!-- Card 3: Tindakan Medis (Flowchart) -->
+      <article class="health-card reveal reveal-delay-3" id="card-medis"
+               style="--card-accent: linear-gradient(90deg, #a0622a, #d4975a);">
+        <div class="health-card-icon" style="--icon-bg: #f5e6d0;" aria-hidden="true">🏥</div>
+        <p class="health-card-eyebrow">Tindakan Medis</p>
+        <h3 class="health-card-title">Ke Mana Warga Saat Sakit?</h3>
+
+        <div class="flow-chart" role="img" aria-label="Alur tindakan medis warga">
+          <div class="flow-start">😷 Warga Merasa Sakit</div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-branches">
+            <div class="flow-node flow-node-primary">
+              <span class="node-icon">🏥</span>
+              Ke Puskesmas / Klinik
+              <span class="flow-pct">62%</span>
+            </div>
+            <div class="flow-node flow-node-secondary">
+              <span class="node-icon">💊</span>
+              Obat Mandiri / Warung
+              <span class="flow-pct">38%</span>
+            </div>
+          </div>
+          <div class="flow-arrow" style="font-size:0.75rem;color:var(--clr-emerald-600);font-weight:700;margin-top:0.5rem;">
+            ✅ Target: Tingkatkan kunjungan ke fasilitas kesehatan
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Posyandu / KIA -->
+      <article class="health-card reveal reveal-delay-4" id="card-posyandu"
+               style="--card-accent: linear-gradient(90deg, #7c3aed, #a78bfa);">
+        <div class="health-card-icon" style="--icon-bg: #ede9fe;" aria-hidden="true">👶</div>
+        <p class="health-card-eyebrow">Posyandu &amp; KIA</p>
+        <h3 class="health-card-title">Kesehatan Ibu dan Anak (KIA)</h3>
+
+        <div class="kia-highlight">
+          <div class="kia-big-num" aria-hidden="true">100%</div>
+          <div class="kia-text">
+            <strong>Seluruh Anak di Atas Garis Merah</strong>
+            <span>Tidak ada balita yang berada di bawah atau di garis merah KIA / KMS</span>
+          </div>
+        </div>
+
+        <div class="kia-children-row" role="img" aria-label="Semua balita sehat">
+          <span class="pictogram-item">👶</span>
+          <span class="pictogram-item">👧</span>
+          <span class="pictogram-item">👦</span>
+          <span class="pictogram-item">👶</span>
+          <span class="pictogram-item">👧</span>
+          <span class="pictogram-item">👦</span>
+          <span class="pictogram-item">👶</span>
+          <span class="pictogram-item">👧</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--clr-gray-500);margin-top:0.5rem;">
+          🛡️ <strong style="color:var(--clr-emerald-700);">Zero Stunting</strong> – Prestasi Luar Biasa Desa!
+        </p>
+
+        <!-- Progress bar for posyandu attendance -->
+        <div style="margin-top:0.75rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--clr-gray-400);margin-bottom:0.35rem;">
+            <span>Kehadiran Posyandu Rutin</span><span>95%</span>
+          </div>
+          <div class="rw-progress-bar">
+            <div class="rw-progress-fill" data-width="95%" style="background: linear-gradient(90deg, #7c3aed, #a78bfa);"></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider" aria-hidden="true" style="background:white;">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 C360,0 720,60 1080,30 C1260,15 1380,45 1440,30 L1440,60 L0,60 Z" fill="var(--clr-mist)"/>
+  </svg>
+</div>
+
+<!-- ============================================================
+     PETA POTENSI & TOGA SECTION
+     ============================================================ -->
+<section class="section section-toga" id="toga" aria-labelledby="toga-title">
+  <div class="container">
+
+    <header class="section-header">
+      <span class="eyebrow eyebrow-coffee reveal">🌿 Pertanian &amp; Potensi Lokal</span>
+      <h2 class="section-title reveal" id="toga-title">
+        Peta Potensi &amp; <span>Tanaman Toga</span>
+      </h2>
+      <p class="section-desc reveal">
+        Tanaman Obat Keluarga (TOGA) tersebar di seluruh RW, menjadi bagian dari kearifan lokal dan ketahanan kesehatan warga.
+      </p>
+    </header>
+
+    <div class="toga-layout">
+
+      <!-- Left: Image + Plant list -->
+      <div>
+        <div class="toga-image-wrap reveal">
+          <img
+            src="assets/images/toga_plants.png"
+            alt="Koleksi tanaman obat keluarga (TOGA) khas Gunung Dempo: jahe, kunyit, serai, dan daun kelor"
+            width="600"
+            height="480"
+            loading="lazy"
+          />
+          <div class="toga-image-overlay">
+            <div class="toga-image-label">🌿 Tanaman TOGA Desa</div>
+            <div class="toga-image-sub">Keanekaragaman hayati lokal yang terjaga</div>
+          </div>
+        </div>
+
+        <div class="toga-plant-list" role="list" aria-label="Daftar tanaman TOGA">
+          <div class="toga-plant-item reveal reveal-delay-1" role="listitem">
+            <span class="plant-emoji">🫚</span> Jahe (Zingiber officinale)
+          </div>
+          <div class="toga-plant-item reveal reveal-delay-2" role="listitem">
+            <span class="plant-emoji">🟡</span> Kunyit (Curcuma longa)
+          </div>
+          <div class="toga-plant-item reveal reveal-delay-1" role="listitem">
+            <span class="plant-emoji">🌾</span> Serai (Cymbopogon citratus)
+          </div>
+          <div class="toga-plant-item reveal reveal-delay-2" role="listitem">
+            <span class="plant-emoji">🍃</span> Daun Kelor (Moringa oleifera)
+          </div>
+          <div class="toga-plant-item reveal reveal-delay-3" role="listitem">
+            <span class="plant-emoji">🌿</span> Lengkuas (Alpinia galanga)
+          </div>
+          <div class="toga-plant-item reveal reveal-delay-4" role="listitem">
+            <span class="plant-emoji">🥬</span> Sambiloto (Andrographis paniculata)
+          </div>
+          <div class="toga-plant-item reveal reveal-delay-3" role="listitem">
+            <span class="plant-emoji">🌱</span> Daun Sirih (Piper betle)
+          </div>
+          <div class="toga-plant-item reveal reveal-delay-4" role="listitem">
+            <span class="plant-emoji">💚</span> Lidah Buaya (Aloe vera)
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: RW Cards -->
+      <div>
+        <div class="rw-grid" role="list" aria-label="Peta TOGA per RW">
+
+          <!-- RW 01 -->
+          <article class="rw-card reveal reveal-delay-1" id="rw-01" role="listitem">
+            <div class="rw-card-header">
+              <span class="rw-number">RW 01</span>
+              <span class="rw-icon" aria-hidden="true">🌿</span>
+            </div>
+            <h3 class="rw-card-name">RT/RW Bukit Asri</h3>
+            <p class="rw-card-desc">Pusat kebun TOGA terlengkap. Jahe, kunyit, dan serai tumbuh subur di pekarangan warga.</p>
+            <div class="rw-tags">
+              <span class="rw-tag">Jahe</span>
+              <span class="rw-tag">Kunyit</span>
+              <span class="rw-tag">Serai</span>
+            </div>
+            <div class="rw-progress">
+              <div class="rw-progress-label">
+                <span>Kepadatan TOGA</span><span>85%</span>
+              </div>
+              <div class="rw-progress-bar">
+                <div class="rw-progress-fill" data-width="85%"></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- RW 02 -->
+          <article class="rw-card reveal reveal-delay-2" id="rw-02" role="listitem">
+            <div class="rw-card-header">
+              <span class="rw-number">RW 02</span>
+              <span class="rw-icon" aria-hidden="true">☕</span>
+            </div>
+            <h3 class="rw-card-name">RT/RW Lembah Dempo</h3>
+            <p class="rw-card-desc">Zona perkebunan kopi robusta berdampingan dengan tanaman obat daun kelor dan sambiloto.</p>
+            <div class="rw-tags">
+              <span class="rw-tag coffee">Kopi</span>
+              <span class="rw-tag">Kelor</span>
+              <span class="rw-tag">Sambiloto</span>
+            </div>
+            <div class="rw-progress">
+              <div class="rw-progress-label">
+                <span>Kepadatan TOGA</span><span>70%</span>
+              </div>
+              <div class="rw-progress-bar">
+                <div class="rw-progress-fill" data-width="70%"></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- RW 03 -->
+          <article class="rw-card reveal reveal-delay-3" id="rw-03" role="listitem">
+            <div class="rw-card-header">
+              <span class="rw-number">RW 03</span>
+              <span class="rw-icon" aria-hidden="true">🍵</span>
+            </div>
+            <h3 class="rw-card-name">RT/RW Puncak Teh</h3>
+            <p class="rw-card-desc">Perkebunan teh mendominasi. Lengkuas dan sirih tumbuh di halaman rumah sebagai tanaman warisan.</p>
+            <div class="rw-tags">
+              <span class="rw-tag">Teh</span>
+              <span class="rw-tag">Lengkuas</span>
+              <span class="rw-tag">Sirih</span>
+            </div>
+            <div class="rw-progress">
+              <div class="rw-progress-label">
+                <span>Kepadatan TOGA</span><span>78%</span>
+              </div>
+              <div class="rw-progress-bar">
+                <div class="rw-progress-fill" data-width="78%"></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- RW 04 -->
+          <article class="rw-card reveal reveal-delay-4" id="rw-04" role="listitem">
+            <div class="rw-card-header">
+              <span class="rw-number">RW 04</span>
+              <span class="rw-icon" aria-hidden="true">🌱</span>
+            </div>
+            <h3 class="rw-card-name">RT/RW Sumber Bening</h3>
+            <p class="rw-card-desc">Area dengan sumber air alami terbaik. Lidah buaya dan aloe vera tumbuh segar di sini.</p>
+            <div class="rw-tags">
+              <span class="rw-tag">Lidah Buaya</span>
+              <span class="rw-tag">Aloe Vera</span>
+              <span class="rw-tag">Jahe Merah</span>
+            </div>
+            <div class="rw-progress">
+              <div class="rw-progress-label">
+                <span>Kepadatan TOGA</span><span>65%</span>
+              </div>
+              <div class="rw-progress-bar">
+                <div class="rw-progress-fill" data-width="65%"></div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- CTA note -->
+        <div class="reveal" style="margin-top:1.5rem;padding:1rem 1.25rem;background:var(--clr-emerald-50);border:1px solid var(--clr-emerald-100);border-radius:var(--radius-md);display:flex;align-items:flex-start;gap:0.75rem;">
+          <span style="font-size:1.4rem;flex-shrink:0;" aria-hidden="true">💡</span>
+          <div>
+            <p style="font-size:0.88rem;font-weight:700;color:var(--clr-emerald-800);margin-bottom:0.2rem;">Program Pengembangan TOGA 2025</p>
+            <p style="font-size:0.82rem;color:var(--clr-sage-600);line-height:1.6;">Tim KKN mendampingi warga dalam pembibitan, perawatan, dan pengolahan tanaman obat menjadi produk bernilai jual tinggi.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider" aria-hidden="true" style="background:var(--clr-mist);">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,0 C480,60 960,0 1440,40 L1440,60 L0,60 Z" fill="var(--clr-gray-800)"/>
+  </svg>
+</div>
+
+<!-- ============================================================
+     KOMODITAS UNGGULAN SECTION
+     ============================================================ -->
+<section class="section section-komoditas" id="komoditas" aria-labelledby="komoditas-title">
+  <div class="container" style="position:relative;z-index:1;">
+
+    <header class="section-header">
+      <span class="eyebrow" style="background:rgba(160,98,42,0.2);color:var(--clr-coffee-300);">
+        ☕ Komoditas Unggulan
+      </span>
+      <h2 class="section-title" id="komoditas-title">
+        Kekayaan Bumi <span>Gunung Dempo</span>
+      </h2>
+      <p class="section-desc" style="color:rgba(255,255,255,0.65);">
+        Dua komoditas andalan yang menjadi tulang punggung perekonomian dan identitas desa di kaki Gunung Dempo.
+      </p>
+    </header>
+
+    <div class="komoditas-grid">
+
+      <article class="komoditas-card reveal reveal-delay-1" id="komoditas-kopi">
+        <span class="komoditas-emoji" aria-hidden="true">☕</span>
+        <h3 class="komoditas-name">Kopi Robusta Dempo</h3>
+        <p class="komoditas-desc">Ditanam di ketinggian 1.000–1.600 mdpl, kopi Dempo dikenal dengan cita rasa earthy, full body, dan sedikit cokelat alami yang khas.</p>
+        <div class="komoditas-stat">±120 ha</div>
+        <div class="komoditas-stat-label">Luas Lahan Kopi</div>
+      </article>
+
+      <article class="komoditas-card reveal reveal-delay-2" id="komoditas-teh">
+        <span class="komoditas-emoji" aria-hidden="true">🍵</span>
+        <h3 class="komoditas-name">Teh Hijau Pegunungan</h3>
+        <p class="komoditas-desc">Perkebunan teh membentang di lereng Gunung Dempo, menghasilkan teh premium dengan aroma segar pegunungan dan kandungan antioksidan tinggi.</p>
+        <div class="komoditas-stat">±80 ha</div>
+        <div class="komoditas-stat-label">Luas Lahan Teh</div>
+      </article>
+
+      <article class="komoditas-card reveal reveal-delay-3" id="komoditas-toga-prod">
+        <span class="komoditas-emoji" aria-hidden="true">🌿</span>
+        <h3 class="komoditas-name">Produk Olahan TOGA</h3>
+        <p class="komoditas-desc">Inisiatif KKN membantu warga mengolah tanaman TOGA menjadi minuman herbal, jamu instan, dan produk perawatan yang siap dipasarkan.</p>
+        <div class="komoditas-stat">8 Jenis</div>
+        <div class="komoditas-stat-label">Produk Unggulan TOGA</div>
+      </article>
+
+    </div>
+
+    <!-- Coffee & Tea Banner Image -->
+    <div class="reveal" style="margin-top:3rem;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);max-height:260px;">
+      <img
+        src="assets/images/coffee_tea.png"
+        alt="Biji kopi robusta dan daun teh hijau khas Gunung Dempo"
+        style="width:100%;height:260px;object-fit:cover;object-position:center;"
+        loading="lazy"
+        width="1200"
+        height="400"
+      />
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer" id="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-main">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="nav-logo-icon" aria-hidden="true">🏔️</div>
+          <div class="nav-logo-text">
+            Desa Ujan Mas Atas
+            <small>Lereng Gunung Dempo</small>
+          </div>
+        </div>
+        <p class="footer-brand-desc">
+          Website profil desa ini dibuat sebagai bagian dari program pengabdian masyarakat (KKN) untuk mendokumentasikan potensi dan kondisi kesehatan desa.
+        </p>
+        <div style="margin-top:1rem;">
+          <span class="kkn-badge">🎓 Program KKN 2025</span>
+        </div>
+      </div>
+
+      <!-- Navigasi -->
+      <div>
+        <p class="footer-heading">Navigasi</p>
+        <ul class="footer-links" role="list">
+          <li><a href="#hero">🏠 Beranda</a></li>
+          <li><a href="#sehat">🏥 Desa Sehat</a></li>
+          <li><a href="#toga">🌿 Peta TOGA</a></li>
+          <li><a href="#komoditas">☕ Komoditas</a></li>
+        </ul>
+      </div>
+
+      <!-- Program KKN -->
+      <div>
+        <p class="footer-heading">Program KKN</p>
+        <ul class="footer-links" role="list">
+          <li><a href="#">📋 Laporan Kegiatan</a></li>
+          <li><a href="#">📸 Galeri Foto</a></li>
+          <li><a href="#">📊 Data Survei</a></li>
+          <li><a href="#">🤝 Mitra Desa</a></li>
+        </ul>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <p class="footer-heading">Kontak</p>
+        <div class="footer-contact-item" role="listitem">
+          <div class="footer-contact-icon" aria-hidden="true">📍</div>
+          <span>Desa Ujan Mas Atas, Kec. Ujan Mas, Kota Pagar Alam, Sumatera Selatan</span>
+        </div>
+        <div class="footer-contact-item" role="listitem">
+          <div class="footer-contact-icon" aria-hidden="true">📧</div>
+          <span>kkn.desa@universitas.ac.id</span>
+        </div>
+        <div class="footer-contact-item" role="listitem">
+          <div class="footer-contact-icon" aria-hidden="true">📞</div>
+          <span>+62 812-3456-7890</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <span>© 2025 Tim KKN Universitas – Desa Ujan Mas Atas.</span>
+        <span style="color:rgba(255,255,255,0.3);">|</span>
+        <span>Dibuat dengan ❤️ untuk warga desa.</span>
+      </div>
+      <span style="color:rgba(255,255,255,0.3);font-size:0.75rem;">
+        Gunung Dempo, Sumatera Selatan 🏔️
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to Top Button -->
+<button class="scroll-top" id="scrollTop" aria-label="Kembali ke atas">↑</button>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Navbar Scroll ---------- */
+  const navbar = document.getElementById('navbar');
+  let lastScrollY = 0;
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    navbar.classList.toggle('scrolled', scrollY > 40);
+    lastScrollY = scrollY;
+  }, { passive: true });
+
+  /* ---------- Hamburger Toggle ---------- */
+  const hamburger = document.getElementById('hamburger');
+  const navWrapper = document.querySelector('.navbar');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = navWrapper.classList.toggle('nav-mobile-open');
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    hamburger.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
+  });
+
+  // Close on nav link click
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      navWrapper.classList.remove('nav-mobile-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Buka menu');
+    });
+  });
+
+  /* ---------- Scroll Reveal ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  /* ---------- Progress Bar Animation ---------- */
+  const progressFills = document.querySelectorAll('.rw-progress-fill');
+
+  const progressObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const fill = entry.target;
+        const targetWidth = fill.getAttribute('data-width');
+        // Slight delay for visual effect
+        setTimeout(() => { fill.style.width = targetWidth; }, 200);
+        progressObserver.unobserve(fill);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  progressFills.forEach(fill => progressObserver.observe(fill));
+
+  /* ---------- Scroll-to-Top Button ---------- */
+  const scrollTopBtn = document.getElementById('scrollTop');
+
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ---------- Animated Counter (Hero Stats) ---------- */
+  function animateCounter(element, start, end, duration, suffix) {
+    let startTime = null;
+    const isFloat = String(end).includes('.');
+
+    function step(currentTime) {
+      if (!startTime) startTime = currentTime;
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = start + (end - start) * eased;
+
+      if (isFloat) {
+        element.textContent = current.toFixed(1) + suffix;
+      } else {
+        element.textContent = Math.round(current).toLocaleString('id-ID') + suffix;
+      }
+
+      if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  // Observe hero stats
+  const heroSection = document.getElementById('hero');
+  let statsAnimated = false;
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !statsAnimated) {
+      statsAnimated = true;
+      setTimeout(() => animateCounter(document.getElementById('stat-penduduk'), 0, 1240, 1500, ''), 100);
+      setTimeout(() => animateCounter(document.getElementById('stat-stunting'), 100, 0, 1200, '%'), 300);
+      setTimeout(() => animateCounter(document.getElementById('stat-komoditas'), 0, 2, 800, ''), 500);
+    }
+  }, { threshold: 0.3 });
+
+  if (heroSection) statsObserver.observe(heroSection);
+
+  /* ---------- Smooth Active Nav Link Highlight ---------- */
+  const sections = document.querySelectorAll('section[id], footer[id]');
+  const navLinksAll = document.querySelectorAll('.nav-links a');
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navLinksAll.forEach(link => {
+          link.style.color = '';
+          if (link.getAttribute('href') === `#${id}`) {
+            link.style.color = 'var(--clr-emerald-700)';
+          }
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => sectionObserver.observe(s));
+
+})();
+</script>
+
+</body>
+</html>

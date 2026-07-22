@@ -1,0 +1,182 @@
+---
+// Hero.astro
+---
+
+<section class="hero" id="hero" aria-label="Selamat Datang">
+
+  <!-- Background -->
+  <div class="hero-bg" aria-hidden="true">
+    <img
+      src="/images/hero_bg_pink_cream.png"
+      alt="Perkebunan teh dan pemandangan Gunung Dempo yang megah bertema soft pink & cream"
+      width="1920"
+      height="1080"
+    />
+  </div>
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <!-- Floating Particles -->
+  <div class="hero-particles" aria-hidden="true">
+    <div class="particle" style="width:80px;height:80px;top:20%;left:10%;--dur:9s;--delay:0s;"></div>
+    <div class="particle" style="width:50px;height:50px;top:60%;left:80%;--dur:7s;--delay:2s;"></div>
+    <div class="particle" style="width:120px;height:120px;top:35%;left:55%;--dur:11s;--delay:1s;opacity:.5"></div>
+    <div class="particle" style="width:40px;height:40px;top:75%;left:25%;--dur:8s;--delay:3s;"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="hero-content container">
+    <div class="hero-inner">
+
+      <!-- Text Column -->
+      <div class="hero-text-col">
+        <div class="hero-badge-top" aria-label="Program KKNT">
+          <span>🎓</span> Program KKNT 103 Kelompok 26 Universitas Sriwijaya
+        </div>
+
+        <h1 class="hero-title">
+          Selamat Datang di<br/>
+          <span class="desa-name">Kelurahan Dempo Makmur</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Harmoni Alam, Kopi, dan Teh di Kaki Gunung Dempo.<br/>
+          Mengabdi bersama, tumbuh bersama, menuju desa sehat dan berdaya.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#demografi" class="btn btn-primary" id="btn-explore-sehat">
+            📊 Data Penduduk
+          </a>
+          <a href="#peta" class="btn btn-outline" id="btn-explore-toga">
+            🗺️ Peta Wilayah
+          </a>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="hero-stats-bar" role="region" aria-label="Statistik Kelurahan">
+    <div class="hero-stats-inner container">
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="stat-penduduk">--</span>
+        <span class="hero-stat-label">Jiwa Penduduk</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="stat-rw">14 RT</span>
+        <span class="hero-stat-label">Wilayah RT</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="stat-komoditas">2</span>
+        <span class="hero-stat-label">Komoditas Unggulan</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider" aria-hidden="true">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill="#ffffff"/>
+  </svg>
+</div>
+
+<script>
+  /* ---------- Animated Counter (Hero Stats) ---------- */
+  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
+
+  function animateCounter(
+    element: HTMLElement,
+    start: number,
+    end: number,
+    duration: number,
+    suffix: string
+  ) {
+    let startTime: number | null = null;
+    const isFloat = String(end).includes('.');
+
+    function step(currentTime: number) {
+      if (!startTime) startTime = currentTime;
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = start + (end - start) * eased;
+
+      if (isFloat) {
+        element.textContent = current.toFixed(1) + suffix;
+      } else {
+        element.textContent = Math.round(current).toLocaleString('id-ID') + suffix;
+      }
+
+      if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  async function fetchHeroStats(): Promise<{ totalPenduduk: number; totalKomoditas: number }> {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) return { totalPenduduk: 2458, totalKomoditas: 2 };
+      const payload = await res.json();
+      const data = Array.isArray(payload) ? payload[0] : (payload || {});
+      let sumP = 0;
+      const defaults: Record<number, number> = {
+        1:185, 2:172, 3:210, 4:164, 5:198, 6:155, 7:176,
+        8:190, 9:142, 10:168, 11:183, 12:175, 13:160, 14:150
+      };
+
+      for (let i = 1; i <= 14; i++) {
+        let p = parseInt(data[`Penduduk_RT_${i}`], 10);
+        if (isNaN(p) || p === 0) {
+          const l = parseInt(data[`Laki_Laki_RT_${i}`], 10) || 0;
+          const f = parseInt(data[`Perempuan_RT_${i}`], 10) || 0;
+          p = l + f;
+        }
+        if (isNaN(p) || p === 0) p = defaults[i] || 160;
+        sumP += p;
+      }
+
+      let countKom = 0;
+      for (let k = 1; k <= 3; k++) {
+        if (data[`Komoditas_${k}`] && data[`Komoditas_${k}`].trim() !== '') countKom++;
+      }
+      if (countKom === 0) countKom = 2;
+
+      return { totalPenduduk: sumP > 0 ? sumP : 2458, totalKomoditas: countKom };
+    } catch {
+      return { totalPenduduk: 2458, totalKomoditas: 2 };
+    }
+  }
+
+  // Observe hero stats
+  const heroSection = document.getElementById('hero');
+  let statsAnimated = false;
+
+  const statsObserver = new IntersectionObserver(async (entries) => {
+    if (entries[0].isIntersecting && !statsAnimated) {
+      statsAnimated = true;
+      const elPenduduk = document.getElementById('stat-penduduk');
+      const elKomoditas = document.getElementById('stat-komoditas');
+
+      const heroStats = await fetchHeroStats();
+
+      if (elPenduduk) animateCounter(elPenduduk, 0, heroStats.totalPenduduk, 1800, '');
+      if (elKomoditas) setTimeout(() => animateCounter(elKomoditas, 0, heroStats.totalKomoditas, 800, ''), 300);
+    }
+  }, { threshold: 0.3 });
+
+  if (heroSection) statsObserver.observe(heroSection);
+
+  // Listen for broadcast from TabelDemografi
+  window.addEventListener('demografi-loaded', (e: any) => {
+    const elPenduduk = document.getElementById('stat-penduduk');
+    if (elPenduduk && e.detail?.totalPenduduk) {
+      animateCounter(elPenduduk, 0, e.detail.totalPenduduk, 1200, '');
+    }
+  });
+</script>

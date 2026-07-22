@@ -1,0 +1,15 @@
+{
+  "name": "profil-kelurahan-dempo-makmur",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Profil Kelurahan Dempo Makmur – Program KKNT 103 Kelompok 24 Universitas Sriwijaya",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.18"
+  }
+}

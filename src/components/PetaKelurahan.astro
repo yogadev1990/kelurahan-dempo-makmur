@@ -1,0 +1,749 @@
+---
+// PetaKelurahan.astro — Leaflet.js + GeoJSON GIS Kelurahan Dempo Makmur
+---
+
+<section class="section section-peta" id="peta" aria-labelledby="peta-title">
+  <div class="container">
+
+    <header class="section-header">
+      <span class="eyebrow reveal">🗺️ Tata Ruang & GIS Digital</span>
+      <h2 class="section-title reveal" id="peta-title">
+        Peta <span>Kelurahan Dempo Makmur</span>
+      </h2>
+      <p class="section-desc reveal">
+        Peta interaktif tata ruang wilayah Kelurahan Dempo Makmur, Kecamatan Pagar Alam Utara.
+        Menampilkan wilayah permukiman, fasilitas publik, kawasan pertanian/kebun, serta jaringan jalan lokal.
+        Klik pada area atau titik fasilitas untuk melihat informasi rinci.
+      </p>
+    </header>
+
+    <!-- Map Widget Card -->
+    <div class="peta-card reveal">
+
+      <!-- Top Info Bar -->
+      <div class="peta-info-bar">
+        <div class="peta-info-item">
+          <span class="peta-info-icon" aria-hidden="true">📍</span>
+          <div>
+            <div class="peta-info-label">Lokasi</div>
+            <div class="peta-info-value">Kel. Dempo Makmur, Kec. Pagar Alam Utara</div>
+          </div>
+        </div>
+        <div class="peta-info-divider" aria-hidden="true"></div>
+        <div class="peta-info-item">
+          <span class="peta-info-icon" aria-hidden="true">📊</span>
+          <div>
+            <div class="peta-info-label">Sumber Data</div>
+            <div class="peta-info-value">Peta Tematik GIS & Rupa Bumi Indonesia (RBI)</div>
+          </div>
+        </div>
+        <div class="peta-info-divider" aria-hidden="true"></div>
+        <div class="peta-info-item">
+          <span class="peta-info-icon" aria-hidden="true">🟢</span>
+          <div>
+            <div class="peta-info-label">Status Map</div>
+            <div class="peta-info-value" id="api-status-text">GIS Aktif Interaktif</div>
+          </div>
+        </div>
+        <!-- Controls -->
+        <div class="map-controls-wrap">
+          <!-- Layer mode toggle -->
+          <div class="layer-toggle-group" role="group" aria-label="Filter layer GIS">
+            <button class="layer-btn active" data-filter="all" id="btn-filter-all" aria-pressed="true">
+              🗺️ Semua Layer
+            </button>
+            <button class="layer-btn" data-filter="permukiman" id="btn-filter-permukiman" aria-pressed="false">
+              🏡 Permukiman
+            </button>
+            <button class="layer-btn" data-filter="lahan" id="btn-filter-lahan" aria-pressed="false">
+              🌾 Lahan Pertanian
+            </button>
+            <button class="layer-btn" data-filter="fasilitas" id="btn-filter-fasilitas" aria-pressed="false">
+              🏫 Fasilitas & Jalan
+            </button>
+          </div>
+          <!-- Basemap toggle -->
+          <div class="basemap-btn-group" role="group" aria-label="Pilih basemap">
+            <button class="basemap-btn" data-layer="carto" aria-pressed="false">🗺️ Minimal</button>
+            <button class="basemap-btn active" data-layer="satellite" aria-pressed="true">🛰️ Satelit</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Summary Stats Bar -->
+      <div class="live-stats-bar" id="live-stats-bar">
+        <div class="live-stat">
+          <div class="live-stat-val" style="color:#059669">4 Area</div>
+          <div class="live-stat-lbl">Wilayah Permukiman</div>
+          <span class="live-stat-badge badge-green">Bangunrejo & Dempo Makmur</span>
+        </div>
+        <div class="live-stat">
+          <div class="live-stat-val" style="color:#1d4ed8">1 Puskeskel</div>
+          <div class="live-stat-lbl">Layanan Kesehatan</div>
+          <span class="live-stat-badge badge-blue">Puskeskel Dempomakmur</span>
+        </div>
+        <div class="live-stat">
+          <div class="live-stat-val" style="color:#7c3aed">1 Sekolah</div>
+          <div class="live-stat-lbl">Pendidikan Dasar</div>
+          <span class="live-stat-badge badge-purple">SD Negeri 64 Pagaralam</span>
+        </div>
+        <div class="live-stat">
+          <div class="live-stat-val" style="color:#84cc16">Sawah & Kebun</div>
+          <div class="live-stat-lbl">Penggunaan Lahan</div>
+          <span class="live-stat-badge badge-lime">Pertanian Komoditas</span>
+        </div>
+        <div class="live-stat">
+          <div class="live-stat-val" style="color:#f59e0b">Jalan Lokal</div>
+          <div class="live-stat-lbl">Jaringan Akses</div>
+          <span class="live-stat-badge badge-yellow">Infrastruktur Penghubung</span>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div class="peta-map-wrap">
+        <div class="peta-map-overlay-loading" id="peta-loading" aria-live="polite">
+          <div class="peta-spinner" aria-hidden="true"></div>
+          <p id="loading-text">Memuat data GIS Kelurahan Dempo Makmur…</p>
+        </div>
+        <div id="leaflet-map" aria-label="Peta interaktif tata ruang Kelurahan Dempo Makmur"></div>
+      </div>
+
+      <!-- Bottom: Legend + Info -->
+      <div class="peta-legend">
+        <div class="peta-legend-left">
+          <div class="peta-legend-title"><span>🗂️</span> Legenda Layer GIS</div>
+          <div class="peta-legend-items" id="legend-items"><!-- JS injected --></div>
+        </div>
+        <div class="peta-legend-right">
+          <p class="peta-legend-note">
+            <strong>💡 Tips:</strong> Klik objek di peta (wilayah permukiman, sawah/kebun, atau titik fasilitas)
+            untuk melihat detail spatial. Gunakan tombol filter di kanan atas untuk memilah kategori data GIS.
+          </p>
+          <div class="peta-tech-badge">
+            <span>⚡</span><strong>Leaflet.js</strong>
+            <span>+</span><strong>GeoJSON GIS</strong>
+            <span>+</span><strong>Dempo Makmur Spatial</strong>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /peta-card -->
+  </div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider" aria-hidden="true" style="background: var(--clr-mist, #f0fdf4);">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C360,60 720,0 1080,30 C1260,45 1380,15 1440,20 L1440,60 L0,60 Z" fill="#ffffff"/>
+  </svg>
+</div>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+
+<style>
+  /* ===== Section ===== */
+  .section-peta {
+    padding: 5rem 0 3rem;
+    background: var(--clr-mist, #f0fdf4);
+  }
+
+  /* ===== Card ===== */
+  .peta-card {
+    background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.07), 0 20px 60px -10px rgba(5,150,105,.12);
+    overflow: hidden;
+    border: 1px solid rgba(5,150,105,.1);
+    transition: box-shadow .3s ease;
+  }
+  .peta-card:hover {
+    box-shadow: 0 8px 12px -2px rgba(0,0,0,.1), 0 30px 80px -10px rgba(5,150,105,.2);
+  }
+
+  /* ===== Info Bar ===== */
+  .peta-info-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: .875rem 1.25rem;
+    gap: 0;
+    background: linear-gradient(135deg,#f0fdf4,#ecfdf5);
+    border-bottom: 1px solid rgba(5,150,105,.15);
+  }
+  .peta-info-item {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    padding: .4rem 1rem;
+    flex: 1;
+    min-width: 160px;
+  }
+  .peta-info-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .peta-info-label {
+    font-size: .62rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: #6b7280; margin-bottom: .1rem;
+  }
+  .peta-info-value { font-size: .76rem; font-weight: 600; color: #111827; }
+  .peta-info-divider { width: 1px; height: 2.25rem; background: rgba(5,150,105,.2); flex-shrink: 0; }
+
+  /* ===== Controls ===== */
+  .map-controls-wrap {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-left: auto;
+    padding-left: 1rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .layer-toggle-group, .basemap-btn-group { display: flex; gap: .25rem; }
+
+  .layer-btn, .basemap-btn {
+    padding: .35rem .7rem;
+    font-size: .72rem; font-weight: 600;
+    border: 1.5px solid rgba(5,150,105,.3);
+    border-radius: .5rem;
+    background: white; color: #374151;
+    cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+  }
+  .layer-btn:hover, .basemap-btn:hover {
+    border-color: #059669; color: #059669; background: #f0fdf4;
+  }
+  .layer-btn.active {
+    background: linear-gradient(135deg,#059669,#10b981);
+    color: white; border-color: transparent;
+    box-shadow: 0 2px 8px rgba(5,150,105,.35);
+  }
+  .basemap-btn.active {
+    background: linear-gradient(135deg,#1e40af,#3b82f6);
+    color: white; border-color: transparent;
+    box-shadow: 0 2px 8px rgba(30,64,175,.35);
+  }
+
+  /* ===== Stats Bar ===== */
+  .live-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0;
+    border-bottom: 1px solid rgba(5,150,105,.12);
+    background: #fff;
+  }
+  .live-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: .7rem .5rem;
+    border-right: 1px solid #f0f0f0;
+    text-align: center;
+    transition: background .2s ease;
+  }
+  .live-stat:last-child { border-right: none; }
+  .live-stat:hover { background: #f9fafb; }
+  .live-stat-val {
+    font-size: 1.15rem; font-weight: 900;
+    line-height: 1.1; letter-spacing: -.02em;
+  }
+  .live-stat-lbl {
+    font-size: .6rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em;
+    color: #9ca3af; margin-top: .2rem;
+  }
+  .live-stat-badge {
+    font-size: .58rem; font-weight: 700;
+    padding: .1rem .35rem;
+    border-radius: .25rem;
+    margin-top: .2rem;
+    display: inline-block;
+  }
+  .badge-green  { background: #d1fae5; color: #065f46; }
+  .badge-blue   { background: #dbeafe; color: #1e40af; }
+  .badge-purple { background: #f3e8ff; color: #6b21a8; }
+  .badge-lime   { background: #ecfccb; color: #3f6212; }
+  .badge-yellow { background: #fef3c7; color: #92400e; }
+
+  /* ===== Map Container ===== */
+  .peta-map-wrap {
+    position: relative; width: 100%; height: 540px; background: #e8f5e9;
+  }
+  #leaflet-map { width: 100%; height: 100%; z-index: 1; }
+  .peta-map-overlay-loading {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg,#f0fdf4,#ecfdf5);
+    z-index: 10; gap: 1rem; color: #059669;
+    font-weight: 600; font-size: .9rem;
+    transition: opacity .5s ease;
+  }
+  .peta-map-overlay-loading.hidden { opacity: 0; pointer-events: none; }
+  .peta-spinner {
+    width: 44px; height: 44px;
+    border: 4px solid rgba(5,150,105,.2);
+    border-top-color: #059669;
+    border-radius: 50%; animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== Legend ===== */
+  .peta-legend {
+    display: flex; gap: 1.5rem;
+    padding: 1rem 1.5rem 1.25rem;
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+  }
+  .peta-legend-left { flex: 1.5; min-width: 260px; }
+  .peta-legend-right { flex: 1; min-width: 220px; }
+  .peta-legend-title {
+    font-size: .72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: #374151; margin-bottom: .6rem;
+    display: flex; align-items: center; gap: .35rem;
+  }
+  .peta-legend-items { display: flex; flex-wrap: wrap; gap: .4rem .9rem; }
+  .peta-legend-item {
+    display: flex; align-items: center; gap: .4rem;
+    font-size: .73rem; color: #374151; font-weight: 500;
+    cursor: pointer; padding: .25rem .45rem;
+    border-radius: .35rem; transition: background .15s ease, transform .15s ease;
+    background: #fff; border: 1px solid #e5e7eb;
+  }
+  .peta-legend-item:hover { background: #f0fdf4; border-color: #a7f3d0; transform: translateY(-1px); }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 3px;
+    flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  }
+  .peta-legend-note { font-size: .7rem; color: #6b7280; line-height: 1.6; margin: 0 0 .6rem; }
+  .peta-tech-badge {
+    display: inline-flex; align-items: center; gap: .3rem;
+    font-size: .68rem; color: #9ca3af;
+    background: #f3f4f6; padding: .25rem .6rem;
+    border-radius: .4rem; border: 1px solid #e5e7eb;
+  }
+  .peta-tech-badge strong { color: #374151; }
+
+  /* ===== Leaflet Custom Markers & Popups ===== */
+  :global(.custom-gis-marker) {
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; color: white; font-weight: 800; font-size: 1rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,.3); border: 2px solid white;
+    transition: transform .2s ease;
+  }
+  :global(.custom-gis-marker:hover) { transform: scale(1.2); }
+  :global(.marker-puskeskel) { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  :global(.marker-sekolah)   { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+  :global(.marker-gedung)    { background: linear-gradient(135deg, #f59e0b, #d97706); font-size: .75rem; }
+
+  :global(.dempo-popup .leaflet-popup-content-wrapper) {
+    border-radius: .875rem !important;
+    padding: 0 !important; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.2) !important;
+    border: none !important; min-width: 250px;
+  }
+  :global(.dempo-popup .leaflet-popup-content) { margin: 0 !important; width: 100% !important; }
+  :global(.popup-header-gis) { padding: .875rem 1rem .625rem; color: white; }
+  :global(.popup-tag) {
+    font-size: .6rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; opacity: .9; margin-bottom: .2rem;
+  }
+  :global(.popup-title) { font-size: 1.05rem; font-weight: 800; line-height: 1.25; }
+  :global(.popup-body-gis) { padding: .75rem 1rem .875rem; background: white; }
+  :global(.popup-field-row) {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .72rem; color: #4b5563; padding: .25rem 0;
+    border-bottom: 1px dashed #f3f4f6;
+  }
+  :global(.popup-field-row:last-child) { border-bottom: none; }
+  :global(.popup-field-lbl) { font-weight: 600; color: #9ca3af; }
+  :global(.popup-field-val) { font-weight: 700; color: #111827; text-align: right; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .peta-info-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
+    .peta-info-divider { display: none; }
+    .peta-info-item { padding: .3rem 0; min-width: unset; }
+    .map-controls-wrap { margin-left: 0; padding-left: 0; width: 100%; }
+    .peta-map-wrap { height: 400px; }
+    .peta-legend { flex-direction: column; }
+  }
+</style>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" is:inline></script>
+
+<script>
+/* ============================================================
+   Peta Kelurahan Dempo Makmur — Leaflet GIS Interactive
+   Source: public/kelurahan-dempo-makmur.geojson
+   ============================================================ */
+(function () {
+
+  const TILE_LAYERS = {
+    carto:     { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', sub: 'abcd', attr: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> &copy; <a href="https://carto.com/">CartoDB</a>' },
+    satellite: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', sub: 'abc',  attr: '&copy; Esri World Imagery' },
+  };
+
+  /* Color mapping for permukiman area polygons */
+  const PERMUKIMAN_COLORS: Record<string, { fill: string; stroke: string; label: string; icon: string }> = {
+    'Bangunrejo':        { fill: '#10b981', stroke: '#047857', label: 'Permukiman Bangunrejo', icon: '🏡' },
+    'Dempomakmur':       { fill: '#3b82f6', stroke: '#1d4ed8', label: 'Permukiman Dempo Makmur', icon: '🏠' },
+    'Gunungdempo':       { fill: '#8b5cf6', stroke: '#6d28d9', label: 'Permukiman Gunung Dempo', icon: '🏔️' },
+    'Pagaralam Selatan': { fill: '#f59e0b', stroke: '#b45309', label: 'Kawasan Pagar Alam Selatan', icon: '🌆' },
+  };
+
+  function getFeatureInfo(feature: any) {
+    let name = feature.properties?.name || '';
+    let namobj = '';
+    let remark = '';
+    let lcode = '';
+
+    if (feature.properties?.description) {
+      const mNam = feature.properties.description.match(/<td>NAMOBJ<\/td>\s*<td>(.*?)<\/td>/i);
+      const mRem = feature.properties.description.match(/<td>REMARK<\/td>\s*<td>(.*?)<\/td>/i);
+      const mLco = feature.properties.description.match(/<td>LCODE<\/td>\s*<td>(.*?)<\/td>/i);
+      if (mNam && mNam[1].trim()) namobj = mNam[1].trim();
+      if (mRem && mRem[1].trim()) remark = mRem[1].trim();
+      if (mLco && mLco[1].trim()) lcode  = mLco[1].trim();
+    }
+
+    const title = name.trim() || namobj.trim() || remark.trim() || 'Objek GIS';
+    return { title, namobj, remark, lcode, type: feature.geometry.type };
+  }
+
+  function buildPopupHtml(feature: any) {
+    const { title, namobj, remark, lcode, type } = getFeatureInfo(feature);
+    
+    let categoryTag = '📌 Objek Spatial';
+    let headerGradient = 'linear-gradient(135deg, #059669, #10b981)';
+
+    if (title.includes('Puskeskel')) {
+      categoryTag = '🏥 Fasilitas Kesehatan';
+      headerGradient = 'linear-gradient(135deg, #ef4444, #b91c1c)';
+    } else if (title.includes('SD Negeri')) {
+      categoryTag = '🏫 Fasilitas Pendidikan';
+      headerGradient = 'linear-gradient(135deg, #2563eb, #1e40af)';
+    } else if (remark === 'Permukiman dan Tempat Kegiatan' || PERMUKIMAN_COLORS[title]) {
+      categoryTag = '🏡 Area Permukiman';
+      headerGradient = 'linear-gradient(135deg, #059669, #047857)';
+    } else if (remark === 'Sawah' || remark === 'Perkebunan/Kebun') {
+      categoryTag = '🌾 Lahan Pertanian / Perkebunan';
+      headerGradient = 'linear-gradient(135deg, #65a30d, #4d7c0f)';
+    } else if (remark.includes('Jalan')) {
+      categoryTag = '🛣️ Infrastruktur Jalan';
+      headerGradient = 'linear-gradient(135deg, #d97706, #b45309)';
+    }
+
+    let geomInfo = type;
+    if (type === 'Point' && feature.geometry.coordinates) {
+      geomInfo = `${feature.geometry.coordinates[1].toFixed(5)}, ${feature.geometry.coordinates[0].toFixed(5)}`;
+    }
+
+    return `
+      <div>
+        <div class="popup-header-gis" style="background: ${headerGradient};">
+          <div class="popup-tag">${categoryTag}</div>
+          <div class="popup-title">${title}</div>
+        </div>
+        <div class="popup-body-gis">
+          <div class="popup-field-row">
+            <span class="popup-field-lbl">Nama Objek</span>
+            <span class="popup-field-val">${namobj || title}</span>
+          </div>
+          <div class="popup-field-row">
+            <span class="popup-field-lbl">Kategori GIS</span>
+            <span class="popup-field-val">${remark || 'Batas / Spatial'}</span>
+          </div>
+          ${lcode ? `
+          <div class="popup-field-row">
+            <span class="popup-field-lbl">Kode LCODE</span>
+            <span class="popup-field-val">${lcode}</span>
+          </div>` : ''}
+          <div class="popup-field-row">
+            <span class="popup-field-lbl">Kelurahan</span>
+            <span class="popup-field-val">Dempo Makmur</span>
+          </div>
+          <div class="popup-field-row">
+            <span class="popup-field-lbl">Koordinat/Geom</span>
+            <span class="popup-field-val">${geomInfo}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function initMap() {
+    const mapEl = document.getElementById('leaflet-map');
+    const loading = document.getElementById('peta-loading');
+    if (!mapEl || typeof (window as any).L === 'undefined') return;
+
+    const L = (window as any).L;
+
+    // Center map on Kelurahan Dempo Makmur
+    const map = L.map('leaflet-map', {
+      center: [-4.028, 103.19],
+      zoom: 14,
+      zoomControl: true,
+      scrollWheelZoom: true,
+    });
+
+    let activeTile = L.tileLayer(TILE_LAYERS.satellite.url, {
+      attribution: TILE_LAYERS.satellite.attr,
+      maxZoom: 19,
+      subdomains: TILE_LAYERS.satellite.sub,
+    }).addTo(map);
+
+    let currentFilter = 'all';
+    let geojsonLayer: any = null;
+    let selectedLayer: any = null;
+
+    /* Custom DivIcon for points */
+    function createPointIcon(feature: any) {
+      const { title } = getFeatureInfo(feature);
+      if (title.includes('Puskeskel')) {
+        return L.divIcon({
+          className: 'custom-gis-marker marker-puskeskel',
+          html: '🏥',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+        });
+      }
+      if (title.includes('SD Negeri')) {
+        return L.divIcon({
+          className: 'custom-gis-marker marker-sekolah',
+          html: '🏫',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+        });
+      }
+      return L.divIcon({
+        className: 'custom-gis-marker marker-gedung',
+        html: '🏢',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11],
+      });
+    }
+
+    /* Style for features */
+    function featureStyle(feature: any) {
+      const { title, remark } = getFeatureInfo(feature);
+
+      // Permukiman polygons
+      if (PERMUKIMAN_COLORS[title]) {
+        const c = PERMUKIMAN_COLORS[title];
+        return { color: c.stroke, fillColor: c.fill, weight: 2, fillOpacity: 0.55 };
+      }
+      if (remark === 'Permukiman dan Tempat Kegiatan') {
+        return { color: '#047857', fillColor: '#10b981', weight: 2, fillOpacity: 0.5 };
+      }
+
+      // Sawah
+      if (remark === 'Sawah') {
+        return { color: '#65a30d', fillColor: '#84cc16', weight: 1.5, fillOpacity: 0.45 };
+      }
+
+      // Perkebunan
+      if (remark === 'Perkebunan/Kebun') {
+        return { color: '#166534', fillColor: '#15803d', weight: 1.5, fillOpacity: 0.5 };
+      }
+
+      // Jalan
+      if (remark === 'Jalan Lokal') {
+        return { color: '#f59e0b', weight: 3.5, opacity: 0.9 };
+      }
+      if (remark === 'Jalan Lain') {
+        return { color: '#64748b', weight: 2, opacity: 0.85, dashArray: '4, 4' };
+      }
+
+      // Default boundary/polygons
+      return { color: '#059669', fillColor: '#a7f3d0', weight: 1.5, fillOpacity: 0.25 };
+    }
+
+    /* Filter predicate */
+    function filterFeature(feature: any): boolean {
+      if (currentFilter === 'all') return true;
+      const { title, remark, type } = getFeatureInfo(feature);
+
+      if (currentFilter === 'permukiman') {
+        return remark === 'Permukiman dan Tempat Kegiatan' || !!PERMUKIMAN_COLORS[title];
+      }
+      if (currentFilter === 'lahan') {
+        return remark === 'Sawah' || remark === 'Perkebunan/Kebun';
+      }
+      if (currentFilter === 'fasilitas') {
+        return type === 'Point' || remark.includes('Jalan');
+      }
+      return true;
+    }
+
+    /* Build interactive legend */
+    function populateLegend() {
+      const container = document.getElementById('legend-items');
+      if (!container) return;
+
+      const items = [
+        { label: '🏡 Bangunrejo', color: '#10b981', target: 'Bangunrejo' },
+        { label: '🏠 Dempo Makmur', color: '#3b82f6', target: 'Dempomakmur' },
+        { label: '🏔️ Gunung Dempo', color: '#8b5cf6', target: 'Gunungdempo' },
+        { label: '🌆 Pagar Alam Selatan', color: '#f59e0b', target: 'Pagaralam Selatan' },
+        { label: '🌾 Sawah & Kebun', color: '#84cc16', target: 'Sawah' },
+        { label: '🏥 Puskeskel & 🏫 SDN 64', color: '#ef4444', target: 'Fasilitas' },
+        { label: '🛣️ Jaringan Jalan', color: '#f59e0b', target: 'Jalan' },
+      ];
+
+      container.innerHTML = items.map(it => `
+        <div class="peta-legend-item" data-legend="${it.target}">
+          <span class="legend-dot" style="background:${it.color};"></span>
+          <span>${it.label}</span>
+        </div>`).join('');
+
+      container.querySelectorAll('.peta-legend-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const target = el.getAttribute('data-legend') ?? '';
+          if (!geojsonLayer) return;
+
+          let bounds: any = L.latLngBounds([]);
+          let found = false;
+
+          geojsonLayer.eachLayer((layer: any) => {
+            const { title, remark } = getFeatureInfo(layer.feature);
+            let match = false;
+
+            if (target === 'Fasilitas' && (title.includes('Puskeskel') || title.includes('SD') || layer.feature.geometry.type === 'Point')) match = true;
+            else if (target === 'Jalan' && remark.includes('Jalan')) match = true;
+            else if (target === 'Sawah' && (remark === 'Sawah' || remark === 'Perkebunan/Kebun')) match = true;
+            else if (title === target || (target === 'Dempomakmur' && title.includes('Dempomakmur'))) match = true;
+
+            if (match) {
+              found = true;
+              if (layer.getBounds) {
+                bounds.extend(layer.getBounds());
+              } else if (layer.getLatLng) {
+                bounds.extend(layer.getLatLng());
+              }
+            }
+          });
+
+          if (found && bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [40, 40], maxZoom: 17 });
+          }
+        });
+      });
+    }
+
+    /* Load GeoJSON */
+    fetch('/kelurahan-dempo-makmur.geojson')
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP error ${r.status}`);
+        return r.json();
+      })
+      .then(data => {
+        geojsonLayer = L.geoJSON(data, {
+          filter: filterFeature,
+          style: featureStyle,
+          pointToLayer: (feature: any, latlng: any) => {
+            return L.marker(latlng, { icon: createPointIcon(feature) });
+          },
+          onEachFeature: (feature: any, layer: any) => {
+            layer.bindPopup(() => buildPopupHtml(feature), {
+              className: 'dempo-popup',
+              maxWidth: 300,
+              autoPan: true,
+            });
+
+            if (feature.geometry.type !== 'Point') {
+              layer.on('mouseover', () => {
+                layer.setStyle({ fillOpacity: 0.8, weight: 3 });
+                layer.bringToFront();
+              });
+              layer.on('mouseout', () => {
+                if (selectedLayer !== layer) {
+                  layer.setStyle(featureStyle(feature));
+                }
+              });
+              layer.on('click', () => {
+                if (selectedLayer && selectedLayer !== layer) {
+                  selectedLayer.setStyle(featureStyle(selectedLayer.feature));
+                }
+                selectedLayer = layer;
+                layer.setStyle({ fillOpacity: 0.85, weight: 3.5 });
+              });
+            }
+          },
+        }).addTo(map);
+
+        if (geojsonLayer.getBounds().isValid()) {
+          map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+        }
+
+        populateLegend();
+        if (loading) setTimeout(() => loading.classList.add('hidden'), 300);
+
+        /* Filter toggle event listeners */
+        document.querySelectorAll('.layer-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const filter = btn.getAttribute('data-filter') || 'all';
+            currentFilter = filter;
+
+            document.querySelectorAll('.layer-btn').forEach(b => {
+              b.classList.remove('active');
+              b.setAttribute('aria-pressed', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
+
+            if (geojsonLayer) {
+              map.removeLayer(geojsonLayer);
+              geojsonLayer = L.geoJSON(data, {
+                filter: filterFeature,
+                style: featureStyle,
+                pointToLayer: (f: any, ll: any) => L.marker(ll, { icon: createPointIcon(f) }),
+                onEachFeature: (f: any, l: any) => {
+                  l.bindPopup(() => buildPopupHtml(f), { className: 'dempo-popup', maxWidth: 300, autoPan: true });
+                },
+              }).addTo(map);
+            }
+          });
+        });
+
+        /* Basemap toggle event listeners */
+        document.querySelectorAll('.basemap-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-layer') as keyof typeof TILE_LAYERS;
+            const cfg = TILE_LAYERS[key];
+            if (!cfg) return;
+
+            map.removeLayer(activeTile);
+            activeTile = L.tileLayer(cfg.url, {
+              attribution: cfg.attr,
+              maxZoom: 19,
+              subdomains: cfg.sub,
+            }).addTo(map);
+
+            if (geojsonLayer) geojsonLayer.bringToFront();
+
+            document.querySelectorAll('.basemap-btn').forEach(b => {
+              b.classList.remove('active');
+              b.setAttribute('aria-pressed', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
+          });
+        });
+      })
+      .catch(err => {
+        console.error('Error loading GeoJSON:', err);
+        if (loading) loading.innerHTML = '<p style="color:#dc2626">⚠️ Gagal memuat data GIS peta.</p>';
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMap);
+  } else {
+    initMap();
+  }
+
+})();
+</script>

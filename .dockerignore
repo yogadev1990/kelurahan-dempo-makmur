@@ -1,0 +1,28 @@
+# ── Build output ────────────────────────────────
+dist/
+.astro/
+
+# ── Dependencies (di-install ulang saat build) ──
+node_modules/
+
+# ── Dev & editor files ──────────────────────────
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ── Git ─────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Legacy static files (tidak dipakai Astro) ───
+assets/css/
+index.html
+
+# ── Docker files ────────────────────────────────
+Dockerfile
+docker-compose.yml
+

@@ -1,0 +1,494 @@
+---
+// Toga.astro
+---
+
+<section class="section section-toga" id="toga" aria-labelledby="toga-title">
+  <div class="container">
+
+    <header class="section-header">
+      <span class="eyebrow eyebrow-coffee reveal">🌿 Pertanian &amp; Potensi Lokal</span>
+      <h2 class="section-title reveal" id="toga-title">
+        Sebaran Potensi &amp; <span>Tanaman TOGA</span>
+      </h2>
+      <p class="section-desc reveal">
+        Tanaman Obat Keluarga (TOGA) tersebar di seluruh RW sebagai bagian dari program kesehatan
+        KKNT 103 Kelompok 24. Data tanaman diperbarui langsung dari lapangan.
+      </p>
+    </header>
+
+    <!-- ===== WIDGET TOGA LIVE ===== -->
+    <div class="toga-live-wrap reveal">
+      <div class="toga-live-header">
+        <div class="toga-live-title">
+          <span class="live-dot-green" aria-hidden="true"></span>
+          <strong>Data TOGA Real-Time</strong>
+          <span class="toga-live-sub">Per RW · Kelurahan Dempo Makmur</span>
+        </div>
+        <span class="toga-live-status" id="toga-api-status">⏳ Menghubungkan…</span>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="toga-summary-grid" id="toga-summary">
+        <div class="toga-sum-skeleton"></div>
+        <div class="toga-sum-skeleton"></div>
+        <div class="toga-sum-skeleton"></div>
+      </div>
+
+      <!-- Plant bar chart -->
+      <div class="toga-chart-section">
+        <p class="toga-chart-label">Jumlah Tanaman per Jenis</p>
+        <div class="toga-chart" id="toga-chart">
+          <div class="toga-bar-skeleton"></div>
+          <div class="toga-bar-skeleton"></div>
+          <div class="toga-bar-skeleton"></div>
+          <div class="toga-bar-skeleton"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RW CARDS (DYNAMIC) ===== -->
+    <div class="rw-section">
+      <div class="rw-section-header">
+        <span class="sub-eyebrow-toga">🗺️ Sebaran Per RW</span>
+        <h3 class="rw-section-title">Distribusi TOGA di Setiap RW</h3>
+      </div>
+      <div class="rw-grid" id="rw-grid" role="list" aria-label="Data TOGA per RW">
+        <!-- 6 skeleton placeholders -->
+        <div class="rw-skeleton"></div>
+        <div class="rw-skeleton"></div>
+        <div class="rw-skeleton"></div>
+        <div class="rw-skeleton"></div>
+        <div class="rw-skeleton"></div>
+        <div class="rw-skeleton"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  :root {
+    --toga-green: #db2777;
+    --toga-green-light: #ec4899;
+    --toga-bg: #fff5f7;
+  }
+
+  .section-toga {
+    background: linear-gradient(180deg, #fff 0%, #fdfbeb 100%);
+    padding: 4rem 0;
+  }
+
+  .eyebrow-coffee { color: #6b7280; }
+
+  /* ===== Widget TOGA Live ===== */
+  .toga-live-wrap {
+    background: #fff;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(219,39,119,0.25);
+    box-shadow: 0 10px 28px -5px rgba(219,39,119,0.12);
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+  .toga-live-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+    border-bottom: 1px solid rgba(219,39,119,0.15);
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+  .toga-live-title {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.95rem; color: #831843;
+  }
+  .toga-live-sub { font-size: 0.75rem; color: #be185d; font-weight: 500; opacity: 0.8; }
+  .live-dot-green {
+    width: 10px; height: 10px; background: #ec4899; border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(236,72,153,0.25);
+    animation: greenPulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes greenPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(236,72,153,0.25); }
+    50%       { box-shadow: 0 0 0 8px rgba(236,72,153,0.1); }
+  }
+  .toga-live-status {
+    font-size: 0.75rem; font-weight: 700; color: #831843;
+    background: #fce7f3; padding: 0.3rem 0.8rem;
+    border-radius: 99px; border: 1px solid #fbcfe8;
+    white-space: nowrap;
+  }
+
+  /* Summary stats grid */
+  .toga-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid #fff5f7;
+  }
+  .toga-sum-skeleton {
+    height: 100px;
+    background: linear-gradient(90deg, #fff5f7 25%, #ffe4e6 50%, #fff5f7 75%);
+    background-size: 200% 100%;
+    animation: togaShimmer 1.5s infinite;
+    border-right: 1px solid #fff;
+  }
+  @keyframes togaShimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* JS-injected summary stat elements */
+  :global(.toga-sum-card) {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 1.25rem 1rem; text-align: center;
+    border-right: 1px solid #fff5f7;
+  }
+  :global(.toga-sum-card:last-child) { border-right: none; }
+  :global(.toga-sum-icon) { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  :global(.toga-sum-val) { font-size: 1.85rem; font-weight: 900; color: #be185d; line-height: 1; margin-bottom: 0.2rem; }
+  :global(.toga-sum-lbl) { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; }
+
+  /* Bar chart */
+  .toga-chart-section { padding: 1.25rem 1.5rem 1.5rem; }
+  .toga-chart-label {
+    font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #6b7280; margin-bottom: 0.875rem;
+  }
+  .toga-chart { display: flex; flex-direction: column; gap: 0.6rem; }
+  .toga-bar-skeleton {
+    height: 32px; border-radius: 8px;
+    background: linear-gradient(90deg, #fff5f7 25%, #ffe4e6 50%, #fff5f7 75%);
+    background-size: 200% 100%;
+    animation: togaShimmer 1.5s infinite;
+  }
+  .toga-bar-skeleton:nth-child(2) { animation-delay: 0.15s; }
+  .toga-bar-skeleton:nth-child(3) { animation-delay: 0.3s; }
+  .toga-bar-skeleton:nth-child(4) { animation-delay: 0.45s; }
+
+  /* JS-injected bar row elements */
+  :global(.toga-bar-row) {
+    display: grid;
+    grid-template-columns: 120px 1fr 48px;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  :global(.toga-bar-name) {
+    font-size: 0.82rem; font-weight: 600; color: #1f2937;
+    display: flex; align-items: center; gap: 0.4rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  :global(.toga-bar-track) {
+    height: 12px; background: #fff5f7; border-radius: 99px; overflow: hidden;
+    border: 1px solid #ffe4e6;
+  }
+  :global(.toga-bar-fill) {
+    height: 100%;
+    background: linear-gradient(90deg, #db2777, #ec4899);
+    border-radius: 99px;
+    transition: width 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 0%;
+  }
+  :global(.toga-bar-count) {
+    font-size: 0.8rem; font-weight: 700; color: #be185d; text-align: right;
+    white-space: nowrap;
+  }
+
+  /* ===== RW Section ===== */
+  .rw-section { margin-top: 0; }
+  .rw-section-header { margin-bottom: 1.25rem; }
+  .sub-eyebrow-toga {
+    display: block;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--toga-green);
+    margin-bottom: 0.3rem;
+  }
+  .rw-section-title {
+    font-size: 1.35rem; font-weight: 800; color: #1f2937; margin: 0;
+  }
+
+  /* RW Grid */
+  .rw-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .rw-skeleton {
+    height: 200px; border-radius: 1rem;
+    background: linear-gradient(90deg, #fff5f7 25%, #ffe4e6 50%, #fff5f7 75%);
+    background-size: 200% 100%;
+    animation: togaShimmer 1.5s infinite;
+  }
+  .rw-skeleton:nth-child(2) { animation-delay: 0.1s; }
+  .rw-skeleton:nth-child(3) { animation-delay: 0.2s; }
+  .rw-skeleton:nth-child(4) { animation-delay: 0.3s; }
+  .rw-skeleton:nth-child(5) { animation-delay: 0.4s; }
+  .rw-skeleton:nth-child(6) { animation-delay: 0.5s; }
+
+  /* JS-injected RW card elements */
+  :global(.rw-card) {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  :global(.rw-card::before) {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #db2777, #ec4899);
+  }
+  :global(.rw-card:hover) {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px -5px rgba(219,39,119,0.15);
+  }
+  :global(.rw-card-header) {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+  :global(.rw-number) {
+    font-size: 0.85rem; font-weight: 800;
+    background: linear-gradient(135deg, #ffe4e6, #fce7f3);
+    color: #831843;
+    padding: 0.3rem 0.75rem; border-radius: 99px;
+    border: 1px solid #fbcfe8;
+  }
+  :global(.rw-icon) { font-size: 1.5rem; }
+  :global(.rw-card-name) {
+    font-size: 1rem; font-weight: 700; color: #1f2937;
+    margin: 0 0 0.4rem;
+  }
+  :global(.rw-card-total) {
+    font-size: 0.8rem; color: #6b7280;
+    margin: 0 0 0.875rem;
+  }
+  :global(.rw-tags) {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+  :global(.rw-tag) {
+    font-size: 0.7rem; font-weight: 600;
+    background: #fff5f7; color: #be185d;
+    padding: 0.2rem 0.55rem; border-radius: 99px;
+    border: 1px solid #ffe4e6;
+  }
+  :global(.rw-progress-wrap) { margin-top: auto; }
+  :global(.rw-progress-label-row) {
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; font-weight: 600; color: #6b7280;
+    margin-bottom: 0.35rem;
+  }
+  :global(.rw-prog-bar) {
+    height: 8px; background: #fff5f7; border-radius: 99px; overflow: hidden;
+    border: 1px solid #ffe4e6;
+  }
+  :global(.rw-prog-fill) {
+    height: 100%;
+    background: linear-gradient(90deg, #db2777, #ec4899);
+    border-radius: 99px;
+    transition: width 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 0%;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .toga-summary-grid { grid-template-columns: repeat(3, 1fr); }
+    .rw-grid { grid-template-columns: repeat(2, 1fr); }
+    :global(.toga-bar-row) { grid-template-columns: 90px 1fr 40px; }
+  }
+  @media (max-width: 480px) {
+    .toga-summary-grid { grid-template-columns: 1fr; }
+    .rw-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+(function () {
+  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQjZyOnFpb-cxOFHqzjoPq_m6f733zhOBiy5EW-5XySDs5NMUo4sSXUTgiDdUPyeP6doL9xmREJvuTJ4mD5AVpDqwIq94KT71syJchqgXv45vhYO_LJ3K55uW91vyV5Q5-Okzng24UyXDz-IZcc82WMgVq91t5EXTBepv1bjvlV2jg4Lc3iaTbTAzbbjXFB688ysePGnE8-ncAHUq8ZdqBV8sKiyMqDvFzMP05fIJXsaq9B_XpdTBNknCCMj1_DNoIXBrfO3vRaM7bA79XoW-8Ia08b3A&lib=MDLAdFgRGOJVJ01oTM4DbJHdi3ZE4dG0b';
+
+  const PLANT_EMOJI: Record<string, string> = {
+    'Jahe': '🫚', 'Kunyit': '🟡', 'Lengkuas': '🌱',
+    'Kencur': '🌿', 'Temulawak': '🌾', 'Sirih': '🍃',
+    'Seledri': '🥬', 'Daun Mint': '🫙',
+  };
+
+  const RW_EMOJI: Record<number, string> = { 1: '🌿', 2: '☕', 3: '🍵', 4: '🌱', 5: '🌺', 6: '🍀' };
+  const RW_NAME: Record<number, string>  = {
+    1: 'Afd. Pabrik',      2: 'Afd. 1 / Talang Darat',
+    3: 'Afd. 2 / Talang Beduk', 4: 'Muara Perikan',
+    5: 'Muara Abadi',  6: 'Janang',
+  };
+
+  function plantEmoji(name: string): string {
+    return PLANT_EMOJI[name] || '🌿';
+  }
+
+  function renderTogaData(togaData: any[]): void {
+    const sumGrid = document.getElementById('toga-summary');
+    const chart   = document.getElementById('toga-chart');
+    const rwGrid  = document.getElementById('rw-grid');
+    const status  = document.getElementById('toga-api-status');
+
+    if (!togaData || !togaData.length) {
+      if (status) status.innerHTML = '🟡 Tidak Ada Data';
+      return;
+    }
+
+    /* --- Aggregate: by plant name --- */
+    const byPlant: Record<string, number> = {};
+    togaData.forEach((t: any) => {
+      byPlant[t.nama_tanaman] = (byPlant[t.nama_tanaman] || 0) + (t.jumlah || 0);
+    });
+
+    /* --- Aggregate: by RW --- */
+    const byRW: Record<number, { tanaman: Record<string, number>; total: number }> = {};
+    togaData.forEach((t: any) => {
+      const rw = Number(t.rw);
+      if (!byRW[rw]) byRW[rw] = { tanaman: {}, total: 0 };
+      byRW[rw].tanaman[t.nama_tanaman] = (byRW[rw].tanaman[t.nama_tanaman] || 0) + (t.jumlah || 0);
+      byRW[rw].total += (t.jumlah || 0);
+    });
+
+    const totalJenis   = Object.keys(byPlant).length;
+    const totalTanaman = Object.values(byPlant).reduce((s, v) => s + v, 0);
+    const totalRW      = Object.keys(byRW).length;
+    const maxJumlah    = Math.max(...Object.values(byPlant));
+    const maxRWTotal   = Math.max(...Object.values(byRW).map(r => r.total));
+
+    if (status) status.innerHTML = `🟢 Live · ${totalRW} RW Terdata`;
+
+    /* --- Summary Stats --- */
+    if (sumGrid) {
+      sumGrid.innerHTML = `
+        <div class="toga-sum-card">
+          <div class="toga-sum-icon">🌿</div>
+          <div class="toga-sum-val">${totalJenis}</div>
+          <div class="toga-sum-lbl">Jenis Tanaman</div>
+        </div>
+        <div class="toga-sum-card">
+          <div class="toga-sum-icon">🪴</div>
+          <div class="toga-sum-val">${totalTanaman}</div>
+          <div class="toga-sum-lbl">Total Tanaman</div>
+        </div>
+        <div class="toga-sum-card">
+          <div class="toga-sum-icon">🗺️</div>
+          <div class="toga-sum-val">${totalRW}</div>
+          <div class="toga-sum-lbl">RW Aktif</div>
+        </div>
+      `;
+    }
+
+    /* --- Bar Chart per plant --- */
+    if (chart) {
+      const sortedPlants = Object.entries(byPlant).sort((a, b) => b[1] - a[1]);
+      chart.innerHTML = sortedPlants.map(([name, jumlah]) => {
+        const pct = maxJumlah ? Math.round(jumlah / maxJumlah * 100) : 0;
+        return `
+          <div class="toga-bar-row">
+            <span class="toga-bar-name">${plantEmoji(name)} ${name}</span>
+            <div class="toga-bar-track">
+              <div class="toga-bar-fill" style="width:0%" data-w="${pct}%"></div>
+            </div>
+            <span class="toga-bar-count">${jumlah}</span>
+          </div>
+        `;
+      }).join('');
+
+      // Animate bars on intersection
+      const fills = chart.querySelectorAll('.toga-bar-fill');
+      const barObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const el = e.target as HTMLElement;
+            setTimeout(() => { el.style.width = el.dataset.w || '0%'; }, 300);
+            barObs.unobserve(el);
+          }
+        });
+      }, { threshold: 0.3 });
+      fills.forEach(f => barObs.observe(f));
+    }
+
+    /* --- RW Cards --- */
+    if (rwGrid) {
+      const rwEntries = Object.entries(byRW)
+        .map(([rw, data]) => ({ rw: Number(rw), ...data }))
+        .sort((a, b) => a.rw - b.rw);
+
+      rwGrid.innerHTML = rwEntries.map(({ rw, tanaman, total }) => {
+        const rwNum   = rw < 10 ? '0' + rw : '' + rw;
+        const name    = RW_NAME[rw] || `Area RW ${rwNum}`;
+        const emoji   = RW_EMOJI[rw] || '🌿';
+        const pct     = maxRWTotal ? Math.round(total / maxRWTotal * 100) : 0;
+        const tags    = Object.entries(tanaman)
+          .sort((a, b) => b[1] - a[1])
+          .map(([nm]) => `<span class="rw-tag">${plantEmoji(nm)} ${nm}</span>`)
+          .join('');
+
+        return `
+          <article class="rw-card" id="rw-${rwNum}" role="listitem">
+            <div class="rw-card-header">
+              <span class="rw-number">RW ${rwNum}</span>
+              <span class="rw-icon" aria-hidden="true">${emoji}</span>
+            </div>
+            <h3 class="rw-card-name">${name}</h3>
+            <p class="rw-card-total">${total} tanaman · ${Object.keys(tanaman).length} jenis</p>
+            <div class="rw-tags">${tags}</div>
+            <div class="rw-progress-wrap">
+              <div class="rw-progress-label-row">
+                <span>Kepadatan TOGA</span><span>${pct}%</span>
+              </div>
+              <div class="rw-prog-bar">
+                <div class="rw-prog-fill" style="width:0%" data-w="${pct}%"></div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // Animate RW progress bars on scroll
+      const fills = rwGrid.querySelectorAll('.rw-prog-fill');
+      const progObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const el = e.target as HTMLElement;
+            setTimeout(() => { el.style.width = el.dataset.w || '0%'; }, 400);
+            progObs.unobserve(el);
+          }
+        });
+      }, { threshold: 0.2 });
+      fills.forEach(f => progObs.observe(f));
+    }
+  }
+
+  /* -- Main Fetch -- */
+  function loadTogaData(url: string, isFallback: boolean = false): void {
+    const status = document.getElementById('toga-api-status');
+    fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((payload: any) => {
+        const togaData = payload.toga ?? [];
+        renderTogaData(togaData);
+        if (status) {
+          status.innerHTML = isFallback ? '🟢 Live · Local Mode' : '🟢 Live';
+        }
+      })
+      .catch((err) => {
+        console.warn(`Fetch TOGA gagal untuk ${url}:`, err);
+        if (!isFallback) {
+          if (status) status.innerHTML = '⏳ Menghubungkan ke Lokal...';
+          loadTogaData('/data-kesehatan-fallback.json', true);
+        } else {
+          if (status) status.innerHTML = '🟡 Offline';
+          const rwGrid = document.getElementById('rw-grid');
+          if (rwGrid) rwGrid.innerHTML = '<p style="padding:1.5rem;color:#9ca3af;font-size:0.9rem;text-align:center;grid-column:1/-1;">Data TOGA tidak tersedia saat ini.</p>';
+        }
+      });
+  }
+
+  loadTogaData(API_URL);
+})();
+</script>
