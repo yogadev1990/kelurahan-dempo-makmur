@@ -1,0 +1,337 @@
+---
+// src/components/ProfilSDM.astro — Profil Tim KKN & Perangkat Desa Kelurahan Dempo Makmur
+---
+
+<section class="section section-sdm" id="sdm" aria-labelledby="sdm-title">
+  <div class="container">
+
+    <!-- Section Header -->
+    <header class="section-header reveal">
+      <span class="eyebrow" style="background:rgba(16,185,129,0.1);color:#059669;">👥 Profil Tim Pendukung</span>
+      <h2 class="section-title" id="sdm-title">
+        Perangkat Desa & <span>Tim KKN Mahasiswa</span>
+      </h2>
+      <p class="section-desc">
+        Mengenal lebih dekat jajaran perangkat kelurahan Dempo Makmur beserta mahasiswa 
+        Kuliah Kerja Nyata Tematik (KKNT) 103 Kelompok 26 Universitas Sriwijaya.
+      </p>
+    </header>
+
+    <!-- Group Containers -->
+    <div id="sdm-groups-container">
+      <!-- Skeletons -->
+      <div class="sdm-group-skeleton">
+        <div class="skeleton-line" style="width:200px; height:24px; margin-bottom:1.5rem;"></div>
+        <div class="sdm-grid-skeleton">
+          <div class="sdm-card-skeleton"></div>
+          <div class="sdm-card-skeleton"></div>
+          <div class="sdm-card-skeleton"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .section-sdm {
+    background: linear-gradient(180deg, #ffffff 0%, #faf6f0 100%);
+    padding-block: var(--space-5xl);
+    position: relative;
+  }
+
+  /* SDM Group Section */
+  :global(.sdm-group) {
+    margin-bottom: 3.5rem;
+  }
+
+  :global(.sdm-group-header) {
+    border-bottom: 2px solid rgba(160, 98, 42, 0.15);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  :global(.sdm-group-title) {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--clr-gray-800);
+    font-family: var(--font-serif);
+  }
+
+  /* Grid Layout */
+  :global(.sdm-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Member Card */
+  :global(.sdm-card) {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--clr-gray-200);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    transition: transform var(--transition-bounce), box-shadow var(--transition-base);
+  }
+
+  :global(.sdm-card:hover) {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(16, 185, 129, 0.25);
+  }
+
+  :global(.sdm-avatar-wrap) {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--clr-gray-100);
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s ease;
+  }
+
+  :global(.sdm-card:hover .sdm-avatar-wrap) {
+    transform: scale(1.05);
+  }
+
+  :global(.sdm-avatar-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  :global(.sdm-avatar-placeholder) {
+    font-size: 2.5rem;
+  }
+
+  :global(.sdm-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  :global(.sdm-name) {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--clr-gray-800);
+    line-height: 1.3;
+  }
+
+  :global(.sdm-role) {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #059669;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  :global(.sdm-contact) {
+    font-size: 0.8rem;
+    color: var(--clr-gray-500);
+    line-height: 1.4;
+    margin-top: 0.25rem;
+  }
+
+  :global(.sdm-wa-btn) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #16a34a;
+    background: rgba(22, 163, 74, 0.08);
+    border: 1px solid rgba(22, 163, 74, 0.2);
+    padding: 0.3rem 0.85rem;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    margin-top: auto;
+  }
+
+  :global(.sdm-wa-btn:hover) {
+    background: #16a34a;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(22, 163, 74, 0.25);
+  }
+
+  /* Skeletons */
+  .sdm-group-skeleton {
+    margin-bottom: 3.5rem;
+  }
+  .sdm-grid-skeleton {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .sdm-card-skeleton {
+    height: 220px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--clr-gray-200);
+    position: relative;
+    overflow: hidden;
+  }
+  .sdm-card-skeleton::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbw4l44YbYf-GNZFFau0vUPdX9kzgHuRKSk0ZNjCLNrU17BYXANM-WIEMm_Z-BL0Xkow/exec';
+
+  interface SDMItem {
+    name: string;
+    role: string;
+    category: string;
+    image: string;
+    contact: string;
+  }
+
+  function getGoogleDriveDirectLink(url: string): string {
+    if (!url) return '';
+    if (url.includes('drive.google.com/uc')) {
+      return url.replace('export=download', 'export=view');
+    }
+    const match = url.match(/\/d\/([-\w]{25,})/);
+    if (match && match[1]) {
+      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+    const idMatch = url.match(/[?&]id=([-\w]{25,})/);
+    if (idMatch && idMatch[1]) {
+      return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+    }
+    return url;
+  }
+
+  const GROUP_ICONS: Record<string, string> = {
+    'Tim KKN 103': '🎓',
+    'Perangkat Kelurahan': '🏛️',
+    'Kader Kesehatan': '🩺',
+  };
+
+  const AVATARS: Record<string, string> = {
+    'Tim KKN 103': '👨‍🎓',
+    'Perangkat Kelurahan': '💼',
+    'Kader Kesehatan': '👩‍⚕️',
+  };
+
+  function renderSDM(items: SDMItem[]): void {
+    const container = document.getElementById('sdm-groups-container');
+    if (!container) return;
+
+    if (items.length === 0) {
+      container.innerHTML = '<p style="text-align: center; color: var(--clr-gray-400); padding: 3rem; font-style: italic;">Tidak ada data tim pendukung yang dipublikasikan saat ini.</p>';
+      return;
+    }
+
+    // Group items by category
+    const grouped: Record<string, SDMItem[]> = {};
+    items.forEach(item => {
+      if (!grouped[item.category]) grouped[item.category] = [];
+      grouped[item.category].push(item);
+    });
+
+    container.innerHTML = Object.entries(grouped).map(([category, members]) => {
+      const groupIcon = GROUP_ICONS[category] || '👥';
+      const placeholderAvatar = AVATARS[category] || '👤';
+
+      return `
+        <div class="sdm-group">
+          <div class="sdm-group-header">
+            <span style="font-size: 1.3rem;">${groupIcon}</span>
+            <h3 class="sdm-group-title">${category}</h3>
+          </div>
+          <div class="sdm-grid">
+            ${members.map(member => {
+              const directImg = getGoogleDriveDirectLink(member.image);
+              let waLink = '';
+              let contactDisplay = member.contact || '';
+              
+              if (member.contact && member.contact.trim() !== '-') {
+                let cleanNum = member.contact.replace(/\D/g, '');
+                if (cleanNum) {
+                  if (cleanNum.startsWith('8')) cleanNum = '62' + cleanNum;
+                  else if (cleanNum.startsWith('0')) cleanNum = '62' + cleanNum.slice(1);
+                  waLink = `https://wa.me/${cleanNum}`;
+                }
+              }
+
+              return `
+                <article class="sdm-card reveal visible" role="listitem">
+                  <div class="sdm-avatar-wrap">
+                    ${directImg ? `
+                      <img src="${directImg}" alt="${member.name}" class="sdm-avatar-img" loading="lazy" />
+                    ` : `
+                      <span class="sdm-avatar-placeholder">${placeholderAvatar}</span>
+                    `}
+                  </div>
+                  <div class="sdm-info">
+                    <h4 class="sdm-name">${member.name}</h4>
+                    <span class="sdm-role">${member.role}</span>
+                  </div>
+                  ${waLink ? `
+                    <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="sdm-wa-btn">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" style="display:inline-block; vertical-align:middle;">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                      </svg>
+                      Hubungi WA
+                    </a>
+                  ` : (contactDisplay && contactDisplay !== '-' ? `<span class="sdm-contact">${contactDisplay}</span>` : '')}
+                </article>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function loadSDM(): Promise<void> {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error();
+      const payload = await res.json();
+      const rawSDM = payload.PROFIL_SDM || [];
+
+      const sdmItems = rawSDM
+        .filter((item: any) => item["Status Tampil"] === 'Ya' && item["Nama Lengkap"] && item["Nama Lengkap"].trim() !== '')
+        .map((item: any) => ({
+          name: item["Nama Lengkap"],
+          role: item["Jabatan / Peran"] || 'Anggota',
+          category: item["Kategori SDM"] || 'Lainnya',
+          image: item["Tautan Foto (Google Drive)"] || '',
+          contact: item["Nomor Kontak / Keterangan"] ? String(item["Nomor Kontak / Keterangan"]) : ''
+        }));
+
+      renderSDM(sdmItems);
+    } catch {
+      const container = document.getElementById('sdm-groups-container');
+      if (container) container.innerHTML = '<p style="text-align: center; color: var(--clr-gray-400); padding: 3rem; font-style: italic;">Gagal memuat tim pendukung, silakan coba lagi.</p>';
+    }
+  }
+
+  loadSDM();
+</script>

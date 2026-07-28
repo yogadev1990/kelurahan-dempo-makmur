@@ -1,0 +1,346 @@
+---
+// src/components/Galeri.astro — Galeri Kegiatan Kelurahan Dempo Makmur
+---
+
+<section class="section section-galeri" id="galeri" aria-labelledby="galeri-title">
+  <div class="container">
+    
+    <!-- Section Header -->
+    <header class="section-header reveal">
+      <span class="eyebrow" style="background:rgba(219,39,119,0.1);color:#db2777;">📸 Galeri Aktivitas Desa</span>
+      <h2 class="section-title" id="galeri-title">
+        Dokumentasi <span>Kegiatan & Aksi Warga</span>
+      </h2>
+      <p class="section-desc">
+        Rangkaian kegiatan pemberdayaan, pemeriksaan kesehatan, gotong royong, dan konservasi 
+        tanaman obat keluarga oleh kelompok KKNT 103 Universitas Sriwijaya bersama warga Kelurahan.
+      </p>
+    </header>
+
+    <!-- Filter Tabs -->
+    <div class="galeri-filters reveal reveal-delay-1" role="group" aria-label="Filter kategori kegiatan">
+      <button class="gf-btn active" data-filter="all" id="galeri-filter-all">Semua Kegiatan</button>
+      <button class="gf-btn" data-filter="Desa Sehat" id="galeri-filter-sehat">🩺 Desa Sehat</button>
+      <button class="gf-btn" data-filter="Konservasi TOGA" id="galeri-filter-toga">🌿 Konservasi TOGA</button>
+      <button class="gf-btn" data-filter="Lainnya" id="galeri-filter-lain">✨ Lainnya</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="galeri-grid" id="galeri-grid" role="list">
+      <!-- Loading placeholders -->
+      <div class="galeri-skeleton"></div>
+      <div class="galeri-skeleton"></div>
+      <div class="galeri-skeleton"></div>
+      <div class="galeri-skeleton"></div>
+      <div class="galeri-skeleton"></div>
+      <div class="galeri-skeleton"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-galeri {
+    background: linear-gradient(180deg, #ffffff 0%, #fff5f7 100%);
+    padding-block: var(--space-5xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Filter Tabs */
+  .galeri-filters {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .gf-btn {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--clr-gray-600);
+    background: #ffffff;
+    border: 1px solid var(--clr-gray-200);
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .gf-btn:hover {
+    border-color: #db2777;
+    color: #db2777;
+    transform: translateY(-1px);
+  }
+
+  .gf-btn.active {
+    background: linear-gradient(135deg, #db2777, #ec4899);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(219, 39, 119, 0.3);
+  }
+
+  /* Gallery Grid */
+  .galeri-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Gallery Card */
+  :global(.galeri-card) {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(219, 39, 119, 0.1);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-bounce), box-shadow var(--transition-base);
+  }
+
+  :global(.galeri-card:hover) {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(219, 39, 119, 0.12);
+  }
+
+  :global(.galeri-img-wrap) {
+    height: 220px;
+    background: #f1f5f9;
+    position: relative;
+    overflow: hidden;
+  }
+
+  :global(.galeri-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :global(.galeri-card:hover .galeri-img) {
+    transform: scale(1.08);
+  }
+
+  :global(.galeri-card-badge) {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    letter-spacing: 0.05em;
+  }
+
+  :global(.galeri-card-badge-sehat) {
+    background: linear-gradient(135deg, #059669, #10b981);
+  }
+
+  :global(.galeri-card-badge-toga) {
+    background: linear-gradient(135deg, #b45309, #d97706);
+  }
+
+  :global(.galeri-card-badge-lain) {
+    background: linear-gradient(135deg, #db2777, #ec4899);
+  }
+
+  :global(.galeri-rw-badge) {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    background: #ffffff;
+    color: #831843;
+    border: 1px solid rgba(219, 39, 119, 0.2);
+  }
+
+  :global(.galeri-card-body) {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  :global(.galeri-card-date) {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--clr-gray-400);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  :global(.galeri-card-title) {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--clr-gray-800);
+    line-height: 1.4;
+  }
+
+  :global(.galeri-card-desc) {
+    font-size: 0.82rem;
+    color: var(--clr-gray-500);
+    line-height: 1.6;
+  }
+
+  /* Skeleton Loading */
+  .galeri-skeleton {
+    height: 350px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--clr-gray-200);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .galeri-skeleton::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Responsive Grid */
+  @media (max-width: 768px) {
+    .galeri-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const API_URL = 'https://script.google.com/macros/s/AKfycbw4l44YbYf-GNZFFau0vUPdX9kzgHuRKSk0ZNjCLNrU17BYXANM-WIEMm_Z-BL0Xkow/exec';
+
+  interface GaleriItem {
+    rw: string;
+    image: string;
+    caption: string;
+    activity: string;
+    date: string;
+    category: string;
+  }
+
+  let galeriDataStore: GaleriItem[] = [];
+
+  function getGoogleDriveDirectLink(url: string): string {
+    if (!url) return '';
+    if (url.includes('drive.google.com/uc')) {
+      return url.replace('export=download', 'export=view');
+    }
+    const match = url.match(/\/d\/([-\w]{25,})/);
+    if (match && match[1]) {
+      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+    const idMatch = url.match(/[?&]id=([-\w]{25,})/);
+    if (idMatch && idMatch[1]) {
+      return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+    }
+    return url;
+  }
+
+  function formatDate(isoStr: string): string {
+    if (!isoStr || isoStr.trim() === '-') return '';
+    try {
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return isoStr;
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch {
+      return isoStr;
+    }
+  }
+
+  function renderGallery(items: GaleriItem[]): void {
+    const grid = document.getElementById('galeri-grid');
+    if (!grid) return;
+
+    if (items.length === 0) {
+      grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--clr-gray-400); padding: 3rem; font-style: italic;">Tidak ada foto kegiatan yang ditemukan.</p>';
+      return;
+    }
+
+    grid.innerHTML = items.map(item => {
+      const directImg = getGoogleDriveDirectLink(item.image);
+      const isSehat = item.category === 'Desa Sehat';
+      const isToga = item.category === 'Konservasi TOGA';
+      const badgeClass = isSehat ? 'galeri-card-badge-sehat' : (isToga ? 'galeri-card-badge-toga' : 'galeri-card-badge-lain');
+      const formattedDate = formatDate(item.date);
+      const rwText = item.rw ? `RW ${item.rw}` : '1 Kelurahan';
+
+      return `
+        <article class="galeri-card reveal visible" data-category="${item.category}" role="listitem">
+          <div class="galeri-img-wrap">
+            ${directImg ? `<img src="${directImg}" alt="${item.activity}" class="galeri-img" loading="lazy" />` : '<div style="height:100%; display:grid; place-items:center; background:#f3f4f6; color:#9ca3af; font-size:2rem;">📷</div>'}
+            <span class="galeri-card-badge ${badgeClass}">${item.category}</span>
+            <span class="galeri-rw-badge">📍 ${rwText}</span>
+          </div>
+          <div class="galeri-card-body">
+            ${formattedDate ? `<div class="galeri-card-date">📅 ${formattedDate}</div>` : ''}
+            <h3 class="galeri-card-title">${item.activity}</h3>
+            <p class="galeri-card-desc">${item.caption}</p>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  async function loadGaleri(): Promise<void> {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error();
+      const payload = await res.json();
+      const rawGaleri = payload.GALERI || [];
+
+      galeriDataStore = rawGaleri
+        .filter((item: any) => item["Tautan Foto (Google Drive)"] && item["Tautan Foto (Google Drive)"].trim() !== '-')
+        .map((item: any) => ({
+          rw: String(item.RW || '').trim(),
+          image: item["Tautan Foto (Google Drive)"],
+          caption: item["Keterangan Foto"] || '',
+          activity: item["Nama Kegiatan"] || 'Aktivitas Warga',
+          date: item["Tanggal Kegiatan"] || '',
+          category: item["Kategori Kegiatan"] || 'Lainnya'
+        }));
+
+      renderGallery(galeriDataStore);
+    } catch {
+      const grid = document.getElementById('galeri-grid');
+      if (grid) grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--clr-gray-400); padding: 3rem; font-style: italic;">Tidak dapat menghubungi server API, silakan segarkan halaman.</p>';
+    }
+  }
+
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.gf-btn');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter ?? 'all';
+      if (filter === 'all') {
+        renderGallery(galeriDataStore);
+      } else {
+        const filtered = galeriDataStore.filter(item => item.category === filter);
+        renderGallery(filtered);
+      }
+    });
+  });
+
+  loadGaleri();
+</script>

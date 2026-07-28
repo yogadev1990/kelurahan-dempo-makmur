@@ -89,7 +89,7 @@
 <button class="scroll-top" id="scrollTop" aria-label="Kembali ke atas">↑</button>
 
 <script>
-  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbw4l44YbYf-GNZFFau0vUPdX9kzgHuRKSk0ZNjCLNrU17BYXANM-WIEMm_Z-BL0Xkow/exec';
 
   /* ---------- Scroll-to-Top Button ---------- */
   const scrollTopBtn = document.getElementById('scrollTop')!;
@@ -108,45 +108,25 @@
       const res = await fetch(API_URL);
       if (!res.ok) return;
       const payload = await res.json();
-      const data = Array.isArray(payload) ? payload[0] : (payload || {});
+      
+      const configArray = payload.PENGATURAN_WEB || [];
+      const kontakSetting = configArray.find((item: any) => item["Kunci Pengaturan"] === "kontak");
 
-      if (data.Email && data.Email.trim() !== '') {
-        const emailStr = data.Email.trim();
-        const el = document.getElementById('footer-email');
-        const link = document.getElementById('footer-email-link') as HTMLAnchorElement | null;
-        if (el) el.textContent = emailStr;
-        if (link) link.href = `mailto:${emailStr}`;
-      }
-
-      if (data.Kontak_telepon && data.Kontak_telepon.trim() !== '') {
-        const phoneStr = String(data.Kontak_telepon).trim();
+      if (kontakSetting) {
+        let phoneStr = String(kontakSetting["Nilai Pengaturan"]).trim();
+        if (/^\d+$/.test(phoneStr)) {
+          if (!phoneStr.startsWith('0') && !phoneStr.startsWith('62') && !phoneStr.startsWith('+')) {
+            phoneStr = '0' + phoneStr;
+          }
+        }
         const el = document.getElementById('footer-phone');
         const link = document.getElementById('footer-phone-link') as HTMLAnchorElement | null;
         if (el) el.textContent = phoneStr;
         if (link) {
-          if (phoneStr.startsWith('http')) {
-            link.href = phoneStr;
-          } else {
-            const digits = phoneStr.replace(/\D/g, '');
-            const waNum = digits.startsWith('0') ? '62' + digits.slice(1) : digits;
-            link.href = `https://wa.me/${waNum}`;
-          }
+          const digits = phoneStr.replace(/\D/g, '');
+          const waNum = digits.startsWith('0') ? '62' + digits.slice(1) : digits;
+          link.href = `https://wa.me/${waNum}`;
         }
-      }
-
-      if (data.Tiktok && data.Tiktok.trim() !== '') {
-        const el = document.getElementById('footer-link-tiktok') as HTMLAnchorElement | null;
-        if (el) el.href = data.Tiktok.trim();
-      }
-
-      if (data.Instagram && data.Instagram.trim() !== '') {
-        const el = document.getElementById('footer-link-instagram') as HTMLAnchorElement | null;
-        if (el) el.href = data.Instagram.trim();
-      }
-
-      if (data.Youtube && data.Youtube.trim() !== '') {
-        const el = document.getElementById('footer-link-youtube') as HTMLAnchorElement | null;
-        if (el) el.href = data.Youtube.trim();
       }
     } catch (e) {
       // Keep static defaults on error

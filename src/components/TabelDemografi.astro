@@ -49,8 +49,8 @@
       <div class="demo-card">
         <div class="demo-card-icon">🏡</div>
         <div class="demo-card-info">
-          <span class="demo-card-val" id="demo-total-rt">14</span>
-          <span class="demo-card-lbl">Wilayah RT</span>
+          <span class="demo-card-val" id="demo-total-kk">--</span>
+          <span class="demo-card-lbl">Kepala Keluarga (KK)</span>
         </div>
         <span class="demo-card-badge demo-badge-gold">Dempo Makmur</span>
       </div>
@@ -70,8 +70,8 @@
           <input
             type="text"
             id="demo-search-input"
-            placeholder="Cari Wilayah RT..."
-            aria-label="Cari Wilayah RT"
+            placeholder="Cari Dusun, RW, atau RT..."
+            aria-label="Cari Wilayah"
           />
         </div>
       </div>
@@ -81,29 +81,32 @@
         <table class="demo-table" id="demo-data-table">
           <thead>
             <tr>
-              <th scope="col" style="width: 70px; text-align: center;">#</th>
-              <th scope="col">Wilayah RT</th>
+              <th scope="col" style="width: 60px; text-align: center;">RW</th>
+              <th scope="col">Nama Dusun</th>
+              <th scope="col" style="text-align: center;">Cakupan RT</th>
+              <th scope="col" style="text-align: center;">Jumlah KK</th>
               <th scope="col" style="text-align: center;">Laki-Laki</th>
               <th scope="col" style="text-align: center;">Perempuan</th>
               <th scope="col" style="text-align: center;">Total Jiwa</th>
-              <th scope="col" style="width: 200px;">Proporsi Wilayah</th>
+              <th scope="col" style="width: 150px;">Proporsi Wilayah</th>
             </tr>
           </thead>
           <tbody id="demo-table-body">
             <!-- Loading Skeleton Rows -->
             <tr class="row-skeleton">
-              <td colspan="6"><div class="skeleton-line"></div></td>
+              <td colspan="8"><div class="skeleton-line"></div></td>
             </tr>
             <tr class="row-skeleton">
-              <td colspan="6"><div class="skeleton-line"></div></td>
+              <td colspan="8"><div class="skeleton-line"></div></td>
             </tr>
             <tr class="row-skeleton">
-              <td colspan="6"><div class="skeleton-line"></div></td>
+              <td colspan="8"><div class="skeleton-line"></div></td>
             </tr>
           </tbody>
           <tfoot id="demo-table-foot">
             <tr class="total-row">
-              <td colspan="2"><strong>Total Keseluruhan</strong></td>
+              <td colspan="3"><strong>Total Keseluruhan</strong></td>
+              <td style="text-align: center;"><strong id="foot-total-kk">--</strong></td>
               <td style="text-align: center;"><strong id="foot-total-laki">--</strong></td>
               <td style="text-align: center;"><strong id="foot-total-perempuan">--</strong></td>
               <td style="text-align: center;"><strong id="foot-total-penduduk">--</strong></td>
@@ -114,7 +117,7 @@
       </div>
     </div>
 
-    <!-- ===== ADDITIONAL WIDGETS ROW: PEKERJAAN, AGAMA & TENAGA KERJA ===== -->
+    <!-- ===== ADDITIONAL WIDGETS ROW: PEKERJAAN, AGAMA & PENDIDIKAN ===== -->
     <div class="demografi-widgets-grid reveal reveal-delay-3">
 
       <!-- Widget 1: Mata Pencaharian & Pekerjaan Utama -->
@@ -134,7 +137,7 @@
         </div>
       </div>
 
-      <!-- Widget 2 & 3 Column: Agama & Usia/Tenaga Kerja -->
+      <!-- Widget 2 & 3 Column: Agama & Pendidikan -->
       <div class="widget-column">
 
         <!-- Widget 2: Demografi Agama -->
@@ -154,20 +157,20 @@
           </div>
         </div>
 
-        <!-- Widget 3: Usia & Tenaga Kerja -->
-        <div class="widget-card widget-tenagakerja">
+        <!-- Widget 3: Pendidikan Penduduk -->
+        <div class="widget-card widget-pendidikan">
           <div class="widget-header">
             <div class="widget-title">
-              <span class="widget-icon">⚡</span>
+              <span class="widget-icon">🎓</span>
               <div>
-                <strong class="widget-heading">Klasifikasi Tenaga Kerja</strong>
-                <span class="widget-sub">Status usia & aktivitas ekonomi</span>
+                <strong class="widget-heading">Tingkat Pendidikan</strong>
+                <span class="widget-sub">Sebaran tingkat pendidikan warga</span>
               </div>
             </div>
-            <span class="widget-badge badge-amber">Produktivitas</span>
+            <span class="widget-badge badge-amber">Sensus Pendidikan</span>
           </div>
-          <div class="widget-body" id="widget-tenagakerja-container">
-            <div class="widget-loading">Memuat data tenaga kerja...</div>
+          <div class="widget-body" id="widget-pendidikan-container">
+            <div class="widget-loading">Memuat data pendidikan...</div>
           </div>
         </div>
 
@@ -616,23 +619,58 @@
   /* ============================================================
      DEMOGRAFI DATA TABLE & WIDGETS FETCH & RENDER SCRIPT
      ============================================================ */
-  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbw4l44YbYf-GNZFFau0vUPdX9kzgHuRKSk0ZNjCLNrU17BYXANM-WIEMm_Z-BL0Xkow/exec';
 
-  const SAMPLE_DEFAULTS: Record<number, { p: number; l: number; f: number }> = {
-    1:  { p: 129, l: 63, f: 66 },
-    2:  { p: 98,  l: 59, f: 39 },
-    3:  { p: 127, l: 50, f: 77 },
-    4:  { p: 96,  l: 54, f: 42 },
-    5:  { p: 119, l: 49, f: 70 },
-    6:  { p: 115, l: 57, f: 58 },
-    7:  { p: 105, l: 70, f: 35 },
-    8:  { p: 101, l: 45, f: 56 },
-    9:  { p: 102, l: 57, f: 45 },
-    10: { p: 132, l: 63, f: 69 },
-    11: { p: 92,  l: 31, f: 61 },
-    12: { p: 110, l: 61, f: 49 },
-    13: { p: 108, l: 55, f: 53 },
-    14: { p: 107, l: 56, f: 51 },
+  const FALLBACK_PAYLOAD = {
+    RW_DEMPO_MAKMUR: [
+      {"RW":1,"Nama Dusun":"Talang Tinggi","RT":"1"},
+      {"RW":2,"Nama Dusun":"Margo Mulyo","RT":"2"},
+      {"RW":3,"Nama Dusun":"Sukananti","RT":"3, 4, 5"},
+      {"RW":4,"Nama Dusun":"Dempo Rejo","RT":"6, 7, 8, 9"},
+      {"RW":5,"Nama Dusun":"Rejo Sari","RT":"10, 11, 12"},
+      {"RW":6,"Nama Dusun":"Talang Pasai","RT":"13, 14"}
+    ],
+    JUMLAH_PENDUDUK: [
+      {"RW":1,"Perempuan":191,"Laki-Laki":236,"Jumlah":427,"KK":134},
+      {"RW":2,"Perempuan":183,"Laki-Laki":181,"Jumlah":364,"KK":119},
+      {"RW":3,"Perempuan":291,"Laki-Laki":266,"Jumlah":557,"KK":179},
+      {"RW":4,"Perempuan":368,"Laki-Laki":351,"Jumlah":718,"KK":263},
+      {"RW":5,"Perempuan":446,"Laki-Laki":487,"Jumlah":933,"KK":284},
+      {"RW":6,"Perempuan":264,"Laki-Laki":262,"Jumlah":526,"KK":168}
+    ],
+    PENDIDIKAN_PENDUDUK: [
+      {"RW / Nama Wilayah":1,"SD Sederajat (J)":22,"SLTP Sederajat (J)":20,"SLTA Sederajat (J)":5,"Akademi/Diploma (J)":5,"Sarjana (J)":17},
+      {"RW / Nama Wilayah":2,"SD Sederajat (J)":27,"SLTP Sederajat (J)":12,"SLTA Sederajat (J)":4,"Akademi/Diploma (J)":5,"Sarjana (J)":13},
+      {"RW / Nama Wilayah":3,"SD Sederajat (J)":23,"SLTP Sederajat (J)":11,"SLTA Sederajat (J)":4,"Akademi/Diploma (J)":5,"Sarjana (J)":19},
+      {"RW / Nama Wilayah":4,"SD Sederajat (J)":19,"SLTP Sederajat (J)":7,"SLTA Sederajat (J)":9,"Akademi/Diploma (J)":1,"Sarjana (J)":7},
+      {"RW / Nama Wilayah":5,"SD Sederajat (J)":0,"SLTP Sederajat (J)":2,"SLTA Sederajat (J)":5,"Akademi/Diploma (J)":0,"Sarjana (J)":0},
+      {"RW / Nama Wilayah":6,"SD Sederajat (J)":21,"SLTP Sederajat (J)":3,"SLTA Sederajat (J)":15,"Akademi/Diploma (J)":3,"Sarjana (J)":8}
+    ],
+    PEKERJAAN_PENDUDUK: [
+      {"Mata Pencaharian Pokok":"Buruh/Swasta","Jumlah":"-"},
+      {"Mata Pencaharian Pokok":"Pegawai Negeri","Jumlah":46},
+      {"Mata Pencaharian Pokok":"Pengrajin","Jumlah":50},
+      {"Mata Pencaharian Pokok":"Pedagang","Jumlah":40},
+      {"Mata Pencaharian Pokok":"Penjahit","Jumlah":14},
+      {"Mata Pencaharian Pokok":"Tukang Kayu","Jumlah":56},
+      {"Mata Pencaharian Pokok":"Tukang Batu","Jumlah":89},
+      {"Mata Pencaharian Pokok":"Peternak","Jumlah":7},
+      {"Mata Pencaharian Pokok":"Montir","Jumlah":15},
+      {"Mata Pencaharian Pokok":"Dokter","Jumlah":"-"},
+      {"Mata Pencaharian Pokok":"Sopir","Jumlah":25},
+      {"Mata Pencaharian Pokok":"Pengemudi Becak","Jumlah":"-"},
+      {"Mata Pencaharian Pokok":"TNI Polri","Jumlah":7},
+      {"Mata Pencaharian Pokok":"Petani","Jumlah":326},
+      {"Mata Pencaharian Pokok":"Pengusaha","Jumlah":31},
+      {"Mata Pencaharian Pokok":"Pegawai Perusahaan","Jumlah":76}
+    ],
+    AGAMA_PENDUDUK: [
+      {"Agama":"Islam","Jumlah":3228},
+      {"Agama":"Kristen","Jumlah":"-"},
+      {"Agama":"Katholik","Jumlah":"-"},
+      {"Agama":"Hindu","Jumlah":"-"},
+      {"Agama":"Budha","Jumlah":"-"}
+    ]
   };
 
   const JOB_EMOJIS: Record<string, string> = {
@@ -650,6 +688,7 @@
     'Peternak': '🐄',
     'TNI Polri': '🪖',
     'Buruh Swasta': '👷',
+    'Buruh/Swasta': '👷',
     'Dokter': '🩺',
   };
 
@@ -661,110 +700,110 @@
     'Budha': '☸️',
   };
 
-  interface RTRowData {
+  interface RWRowData {
     id: number;
     name: string;
+    dusun: string;
+    rtList: string;
+    kk: number;
     laki: number;
     perempuan: number;
     total: number;
   }
 
-  let tableDataStore: RTRowData[] = [];
+  let tableDataStore: RWRowData[] = [];
 
   function formatNumber(num: number): string {
     return num.toLocaleString('id-ID');
   }
 
   function parseDemografiPayload(payload: any) {
-    const rawObj = Array.isArray(payload) ? payload[0] : (payload || {});
-    const rows: RTRowData[] = [];
+    const rwInfo = payload.RW_DEMPO_MAKMUR || FALLBACK_PAYLOAD.RW_DEMPO_MAKMUR;
+    const popInfo = payload.JUMLAH_PENDUDUK || FALLBACK_PAYLOAD.JUMLAH_PENDUDUK;
+    const eduInfo = payload.PENDIDIKAN_PENDUDUK || FALLBACK_PAYLOAD.PENDIDIKAN_PENDUDUK;
+    const jobInfo = payload.PEKERJAAN_PENDUDUK || FALLBACK_PAYLOAD.PEKERJAAN_PENDUDUK;
+    const relInfo = payload.AGAMA_PENDUDUK || FALLBACK_PAYLOAD.AGAMA_PENDUDUK;
+
+    const rows: RWRowData[] = [];
     let sumP = 0;
     let sumL = 0;
     let sumF = 0;
+    let sumKK = 0;
 
-    for (let i = 1; i <= 14; i++) {
-      const rawP = rawObj[`Penduduk_RT_${i}`];
-      const rawL = rawObj[`Laki_Laki_RT_${i}`];
-      const rawF = rawObj[`Perempuan_RT_${i}`];
+    rwInfo.forEach((rwItem: any) => {
+      const rwNum = parseInt(rwItem.RW, 10);
+      const popItem = popInfo.find((p: any) => parseInt(p.RW, 10) === rwNum) || {};
+      
+      const l = parseInt(popItem["Laki-Laki"] ?? popItem.Laki_Laki, 10) || 0;
+      const f = parseInt(popItem.Perempuan, 10) || 0;
+      const kk = parseInt(popItem.KK, 10) || 0;
+      const total = parseInt(popItem.Jumlah, 10) || (l + f);
 
-      let p = parseInt(rawP, 10);
-      let l = parseInt(rawL, 10);
-      let f = parseInt(rawF, 10);
-
-      if ((isNaN(p) || p === 0) && (!isNaN(l) || !isNaN(f))) {
-        p = (l || 0) + (f || 0);
-      }
-
-      if (isNaN(p) || p === 0) {
-        const def = SAMPLE_DEFAULTS[i] || { p: 100, l: 50, f: 50 };
-        p = def.p;
-        l = def.l;
-        f = def.f;
-      }
-
-      if (isNaN(l)) l = Math.round(p * 0.5);
-      if (isNaN(f)) f = p - l;
-
-      sumP += p;
+      sumP += total;
       sumL += l;
       sumF += f;
+      sumKK += kk;
 
       rows.push({
-        id: i,
-        name: `RT ${i < 10 ? '0' + i : i}`,
+        id: rwNum,
+        name: `RW ${rwNum < 10 ? '0' + rwNum : rwNum}`,
+        dusun: rwItem["Nama Dusun"] || "-",
+        rtList: rwItem.RT ? `RT ${rwItem.RT}` : "-",
+        kk,
         laki: l,
         perempuan: f,
-        total: p
+        total
       });
-    }
+    });
 
     /* Extract Pekerjaan */
-    const pekerjaanItems: { name: string; label: string; count: number; emoji: string }[] = [];
-    for (const key in rawObj) {
-      if (key.startsWith('Pekerjaan_')) {
-        const val = rawObj[key];
-        const count = parseInt(val, 10);
-        if (!isNaN(count) && count > 0) {
-          const rawLabel = key.replace('Pekerjaan_', '').replace(/_/g, ' ');
-          const emoji = JOB_EMOJIS[rawLabel] || '💼';
-          pekerjaanItems.push({ name: key, label: rawLabel, count, emoji });
-        }
+    const pekerjaanItems: { label: string; count: number; emoji: string }[] = [];
+    jobInfo.forEach((item: any) => {
+      const count = parseInt(item.Jumlah, 10);
+      if (!isNaN(count) && count > 0) {
+        const label = item["Mata Pencaharian Pokok"] || "";
+        const emoji = JOB_EMOJIS[label] || '💼';
+        pekerjaanItems.push({ label, count, emoji });
       }
-    }
+    });
     pekerjaanItems.sort((a, b) => b.count - a.count);
 
     /* Extract Agama */
     const agamaItems: { label: string; count: number; emoji: string }[] = [];
-    for (const key in rawObj) {
-      if (key.startsWith('Agama_')) {
-        const val = rawObj[key];
-        const count = parseInt(val, 10);
-        const rawLabel = key.replace('Agama_', '').replace(/_/g, ' ');
-        const emoji = AGAMA_EMOJIS[rawLabel] || '☸️';
-        if (!isNaN(count) && count > 0) {
-          agamaItems.push({ label: rawLabel, count, emoji });
-        } else {
-          agamaItems.push({ label: rawLabel, count: 0, emoji });
-        }
-      }
-    }
+    relInfo.forEach((item: any) => {
+      const label = item.Agama || "";
+      const count = parseInt(item.Jumlah, 10) || 0;
+      const emoji = AGAMA_EMOJIS[label] || '☸️';
+      agamaItems.push({ label, count, emoji });
+    });
 
-    /* Extract Tenaga Kerja */
-    const tenagaKerja = {
-      produktif: parseInt(rawObj.Tenaga_Kerja_Usia_15_60, 10) || 0,
-      irt: parseInt(rawObj.Tenaga_Kerja_Ibu_Rumah_Tangga, 10) || 0,
-      sekolah: parseInt(rawObj.Tenaga_Kerja_Masih_Sekolah, 10) || 0,
-    };
+    /* Extract Pendidikan (Education) */
+    const eduTotals = { sd: 0, sltp: 0, slta: 0, diploma: 0, sarjana: 0 };
+    eduInfo.forEach((item: any) => {
+      eduTotals.sd += parseInt(item["SD Sederajat (J)"], 10) || 0;
+      eduTotals.sltp += parseInt(item["SLTP Sederajat (J)"], 10) || 0;
+      eduTotals.slta += parseInt(item["SLTA Sederajat (J)"], 10) || 0;
+      eduTotals.diploma += parseInt(item["Akademi/Diploma (J)"] ?? item["Akademi/Diploma (J)"], 10) || 0;
+      eduTotals.sarjana += parseInt(item["Sarjana (J)"], 10) || 0;
+    });
 
-    return { rows, totalPenduduk: sumP, totalLaki: sumL, totalPerempuan: sumF, pekerjaanItems, agamaItems, tenagaKerja };
+    const pendidikanItems = [
+      { label: 'SD Sederajat', count: eduTotals.sd, emoji: '🎒' },
+      { label: 'SLTP Sederajat', count: eduTotals.sltp, emoji: '🏫' },
+      { label: 'SLTA Sederajat', count: eduTotals.slta, emoji: '📜' },
+      { label: 'Akademi / Diploma', count: eduTotals.diploma, emoji: '🎓' },
+      { label: 'Sarjana (S1/S2/S3)', count: eduTotals.sarjana, emoji: '👩‍🎓' },
+    ];
+
+    return { rows, totalPenduduk: sumP, totalLaki: sumL, totalPerempuan: sumF, totalKK: sumKK, pekerjaanItems, agamaItems, pendidikanItems };
   }
 
-  function renderTable(rows: RTRowData[], grandTotal: number): void {
+  function renderTable(rows: RWRowData[], grandTotal: number): void {
     const tbody = document.getElementById('demo-table-body');
     if (!tbody) return;
 
     if (rows.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--clr-gray-400);">Tidak ada data RT ditemukan.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--clr-gray-400);">Tidak ada data RW ditemukan.</td></tr>';
       return;
     }
 
@@ -773,7 +812,9 @@
       return `
         <tr>
           <td style="font-weight: 700; color: var(--clr-gray-400); text-align: center;">${idx + 1}</td>
-          <td><strong>${r.name}</strong></td>
+          <td><strong>${r.dusun}</strong></td>
+          <td style="text-align: center; font-weight: 600;">${r.rtList}</td>
+          <td style="text-align: center; font-weight: 600;">${formatNumber(r.kk)}</td>
           <td style="text-align: center; font-weight: 600;">${formatNumber(r.laki)}</td>
           <td style="text-align: center; font-weight: 600;">${formatNumber(r.perempuan)}</td>
           <td style="text-align: center; font-weight: 800; color: var(--clr-gray-900);">${formatNumber(r.total)}</td>
@@ -790,7 +831,7 @@
     }).join('');
   }
 
-  function renderWidgets(pekerjaan: any[], agama: any[], tk: any, totalPenduduk: number) {
+  function renderWidgets(pekerjaan: any[], agama: any[], pendidikan: any[]) {
     // Pekerjaan Widget
     const pContainer = document.getElementById('widget-pekerjaan-container');
     if (pContainer) {
@@ -837,43 +878,42 @@
       }
     }
 
-    // Tenaga Kerja Widget
-    const tkContainer = document.getElementById('widget-tenagakerja-container');
-    if (tkContainer) {
-      tkContainer.innerHTML = `
-        <div class="tenagakerja-list">
-          <div class="tk-card">
-            <div class="tk-info">
-              <span class="tk-icon">💼</span>
-              <span class="tk-title">Usia Produktif (15-60 Thn)</span>
-            </div>
-            <span class="tk-val">${tk.produktif > 0 ? formatNumber(tk.produktif) + ' Jiwa' : '--'}</span>
-          </div>
-          <div class="tk-card" style="background:#fffcf5;border-color:#fde68a;">
-            <div class="tk-info">
-              <span class="tk-icon">🏠</span>
-              <span class="tk-title">Ibu Rumah Tangga</span>
-            </div>
-            <span class="tk-val" style="color:#b45309">${tk.irt > 0 ? formatNumber(tk.irt) + ' Jiwa' : '--'}</span>
-          </div>
-          <div class="tk-card" style="background:#f0fdf4;border-color:#bbf7d0;">
-            <div class="tk-info">
-              <span class="tk-icon">🎓</span>
-              <span class="tk-title">Pelajar / Masih Sekolah</span>
-            </div>
-            <span class="tk-val" style="color:#15803d">${tk.sekolah > 0 ? formatNumber(tk.sekolah) + ' Jiwa' : '--'}</span>
-          </div>
-        </div>`;
+    // Pendidikan Widget
+    const eduContainer = document.getElementById('widget-pendidikan-container');
+    if (eduContainer) {
+      const totalEducated = pendidikan.reduce((acc, item) => acc + item.count, 0);
+      if (totalEducated === 0) {
+        eduContainer.innerHTML = '<p class="widget-loading">Belum ada data pendidikan terdata.</p>';
+      } else {
+        eduContainer.innerHTML = `
+          <div class="pekerjaan-list">
+            ${pendidikan.map(item => {
+              const pct = totalEducated > 0 ? ((item.count / totalEducated) * 100).toFixed(1) : '0';
+              return `
+                <div class="pekerjaan-item">
+                  <div class="pekerjaan-meta">
+                    <span class="pekerjaan-label">${item.emoji} ${item.label}</span>
+                    <span class="pekerjaan-val">${formatNumber(item.count)} Jiwa (${pct}%)</span>
+                  </div>
+                  <div class="pekerjaan-track">
+                    <div class="pekerjaan-fill" style="width: ${pct}%; background: linear-gradient(90deg, #d97706, #fbbf24);"></div>
+                  </div>
+                </div>`;
+            }).join('')}
+          </div>`;
+      }
     }
   }
 
-  function updateSummary(totalP: number, totalL: number, totalF: number): void {
+  function updateSummary(totalP: number, totalL: number, totalF: number, totalKK: number): void {
     const elTotalP = document.getElementById('demo-total-penduduk');
     const elTotalL = document.getElementById('demo-total-laki');
     const elTotalF = document.getElementById('demo-total-perempuan');
+    const elTotalKK = document.getElementById('demo-total-kk');
     const elPctL   = document.getElementById('demo-pct-laki');
     const elPctF   = document.getElementById('demo-pct-perempuan');
 
+    const elFootKK = document.getElementById('foot-total-kk');
     const elFootL = document.getElementById('foot-total-laki');
     const elFootF = document.getElementById('foot-total-perempuan');
     const elFootP = document.getElementById('foot-total-penduduk');
@@ -881,7 +921,9 @@
     if (elTotalP) elTotalP.textContent = formatNumber(totalP);
     if (elTotalL) elTotalL.textContent = formatNumber(totalL);
     if (elTotalF) elTotalF.textContent = formatNumber(totalF);
+    if (elTotalKK) elTotalKK.textContent = formatNumber(totalKK);
 
+    if (elFootKK) elFootKK.textContent = formatNumber(totalKK);
     if (elFootL) elFootL.textContent = formatNumber(totalL);
     if (elFootF) elFootF.textContent = formatNumber(totalF);
     if (elFootP) elFootP.textContent = formatNumber(totalP);
@@ -892,7 +934,7 @@
     }
 
     window.dispatchEvent(new CustomEvent('demografi-loaded', {
-      detail: { totalPenduduk: totalP, totalLaki: totalL, totalPerempuan: totalF }
+      detail: { totalPenduduk: totalP, totalLaki: totalL, totalPerempuan: totalF, totalKK }
     }));
   }
 
@@ -909,19 +951,19 @@
       tableDataStore = parsed.rows;
 
       renderTable(tableDataStore, parsed.totalPenduduk);
-      renderWidgets(parsed.pekerjaanItems, parsed.agamaItems, parsed.tenagaKerja, parsed.totalPenduduk);
-      updateSummary(parsed.totalPenduduk, parsed.totalLaki, parsed.totalPerempuan);
+      renderWidgets(parsed.pekerjaanItems, parsed.agamaItems, parsed.pendidikanItems);
+      updateSummary(parsed.totalPenduduk, parsed.totalLaki, parsed.totalPerempuan, parsed.totalKK);
 
       if (statusDot) statusDot.classList.add('online');
-      if (statusText) statusText.textContent = '🟢 Terhubung · Google Sheets API Live (Demografi & Pekerjaan)';
+      if (statusText) statusText.textContent = '🟢 Terhubung · Google Sheets API Live (Demografi & Pendidikan)';
     } catch (err) {
       console.warn('Gagal memuat API Google Sheets, menggunakan data fallback:', err);
       const parsed = parseDemografiPayload({});
       tableDataStore = parsed.rows;
 
       renderTable(tableDataStore, parsed.totalPenduduk);
-      renderWidgets(parsed.pekerjaanItems, parsed.agamaItems, parsed.tenagaKerja, parsed.totalPenduduk);
-      updateSummary(parsed.totalPenduduk, parsed.totalLaki, parsed.totalPerempuan);
+      renderWidgets(parsed.pekerjaanItems, parsed.agamaItems, parsed.pendidikanItems);
+      updateSummary(parsed.totalPenduduk, parsed.totalLaki, parsed.totalPerempuan, parsed.totalKK);
 
       if (statusDot) statusDot.classList.add('online');
       if (statusText) statusText.textContent = '🟢 Mode Demo · Data API Siap Terhubung';
@@ -938,7 +980,11 @@
       return;
     }
 
-    const filtered = tableDataStore.filter(r => r.name.toLowerCase().includes(query));
+    const filtered = tableDataStore.filter(r => 
+      r.name.toLowerCase().includes(query) ||
+      r.dusun.toLowerCase().includes(query) ||
+      r.rtList.toLowerCase().includes(query)
+    );
     const grandTotal = tableDataStore.reduce((acc, r) => acc + r.total, 0);
     renderTable(filtered, grandTotal);
   });
