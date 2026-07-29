@@ -778,13 +778,14 @@
     });
 
     /* Extract Pendidikan (Education) */
-    const eduTotals = { sd: 0, sltp: 0, slta: 0, diploma: 0, sarjana: 0 };
+    const eduTotals = { sd: 0, sltp: 0, slta: 0, diploma: 0, sarjana: 0, pascasarjana:0 };
     eduInfo.forEach((item: any) => {
       eduTotals.sd += parseInt(item["SD Sederajat (J)"], 10) || 0;
       eduTotals.sltp += parseInt(item["SLTP Sederajat (J)"], 10) || 0;
       eduTotals.slta += parseInt(item["SLTA Sederajat (J)"], 10) || 0;
       eduTotals.diploma += parseInt(item["Akademi/Diploma (J)"] ?? item["Akademi/Diploma (J)"], 10) || 0;
       eduTotals.sarjana += parseInt(item["Sarjana (J)"], 10) || 0;
+      eduTotals.sarjana += parseInt(item["Pascasarjana (J)"], 10) || 0;
     });
 
     const pendidikanItems = [
@@ -793,6 +794,7 @@
       { label: 'SLTA Sederajat', count: eduTotals.slta, emoji: '📜' },
       { label: 'Akademi / Diploma', count: eduTotals.diploma, emoji: '🎓' },
       { label: 'Sarjana (S1/S2/S3)', count: eduTotals.sarjana, emoji: '👩‍🎓' },
+      { label: 'Pascasarjana', count: eduTotals.pascasarjana, emoji: '🎓' },
     ];
 
     return { rows, totalPenduduk: sumP, totalLaki: sumL, totalPerempuan: sumF, totalKK: sumKK, pekerjaanItems, agamaItems, pendidikanItems };
