@@ -242,16 +242,18 @@
 
   function getGoogleDriveDirectLink(url: string): string {
     if (!url) return '';
-    if (url.includes('drive.google.com/uc')) {
-      return url.replace('export=download', 'export=view');
-    }
+    let fileId = '';
     const match = url.match(/\/d\/([-\w]{25,})/);
     if (match && match[1]) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      fileId = match[1];
+    } else {
+      const idMatch = url.match(/[?&]id=([-\w]{25,})/);
+      if (idMatch && idMatch[1]) {
+        fileId = idMatch[1];
+      }
     }
-    const idMatch = url.match(/[?&]id=([-\w]{25,})/);
-    if (idMatch && idMatch[1]) {
-      return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+    if (fileId) {
+      return `https://lh3.googleusercontent.com/d/${fileId}`;
     }
     return url;
   }
