@@ -20,8 +20,10 @@
     <!-- Filter Tabs -->
     <div class="galeri-filters reveal reveal-delay-1" role="group" aria-label="Filter kategori kegiatan">
       <button class="gf-btn active" data-filter="all" id="galeri-filter-all">Semua Kegiatan</button>
-      <button class="gf-btn" data-filter="Desa Sehat" id="galeri-filter-sehat">🩺 Desa Sehat</button>
-      <button class="gf-btn" data-filter="Konservasi TOGA" id="galeri-filter-toga">🌿 Konservasi TOGA</button>
+      <button class="gf-btn" data-filter="Pojok Literasi" id="galeri-filter-literasi">📖 Pojok Literasi</button>
+      <button class="gf-btn" data-filter="Kotak Sampah" id="galeri-filter-sampah">🗑️ Kotak Sampah</button>
+      <button class="gf-btn" data-filter="Smart Farming" id="galeri-filter-farming">🚜 Smart Farming</button>
+      <button class="gf-btn" data-filter="Penyuluhan" id="galeri-filter-penyuluhan">📢 Penyuluhan</button>
       <button class="gf-btn" data-filter="Lainnya" id="galeri-filter-lain">✨ Lainnya</button>
     </div>
 
@@ -138,12 +140,20 @@
     letter-spacing: 0.05em;
   }
 
-  :global(.galeri-card-badge-sehat) {
-    background: linear-gradient(135deg, #059669, #10b981);
+  :global(.galeri-card-badge-literasi) {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
   }
 
-  :global(.galeri-card-badge-toga) {
-    background: linear-gradient(135deg, #b45309, #d97706);
+  :global(.galeri-card-badge-sampah) {
+    background: linear-gradient(135deg, #0d9488, #06b6d4);
+  }
+
+  :global(.galeri-card-badge-farming) {
+    background: linear-gradient(135deg, #16a34a, #10b981);
+  }
+
+  :global(.galeri-card-badge-penyuluhan) {
+    background: linear-gradient(135deg, #ea580c, #f59e0b);
   }
 
   :global(.galeri-card-badge-lain) {
@@ -158,9 +168,14 @@
     font-weight: 800;
     padding: 0.25rem 0.65rem;
     border-radius: var(--radius-full);
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
     color: #831843;
     border: 1px solid rgba(219, 39, 119, 0.2);
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   :global(.galeri-card-body) {
@@ -230,7 +245,7 @@
   const API_URL = 'https://script.google.com/macros/s/AKfycbw4l44YbYf-GNZFFau0vUPdX9kzgHuRKSk0ZNjCLNrU17BYXANM-WIEMm_Z-BL0Xkow/exec';
 
   interface GaleriItem {
-    rw: string;
+    location: string;
     image: string;
     caption: string;
     activity: string;
@@ -280,18 +295,21 @@
 
     grid.innerHTML = items.map(item => {
       const directImg = getGoogleDriveDirectLink(item.image);
-      const isSehat = item.category === 'Desa Sehat';
-      const isToga = item.category === 'Konservasi TOGA';
-      const badgeClass = isSehat ? 'galeri-card-badge-sehat' : (isToga ? 'galeri-card-badge-toga' : 'galeri-card-badge-lain');
+      
+      let badgeClass = 'galeri-card-badge-lain';
+      if (item.category === 'Pojok Literasi') badgeClass = 'galeri-card-badge-literasi';
+      else if (item.category === 'Kotak Sampah') badgeClass = 'galeri-card-badge-sampah';
+      else if (item.category === 'Smart Farming') badgeClass = 'galeri-card-badge-farming';
+      else if (item.category === 'Penyuluhan') badgeClass = 'galeri-card-badge-penyuluhan';
+
       const formattedDate = formatDate(item.date);
-      const rwText = item.rw ? `RW ${item.rw}` : '1 Kelurahan';
 
       return `
         <article class="galeri-card reveal visible" data-category="${item.category}" role="listitem">
           <div class="galeri-img-wrap">
             ${directImg ? `<img src="${directImg}" alt="${item.activity}" class="galeri-img" loading="lazy" />` : '<div style="height:100%; display:grid; place-items:center; background:#f3f4f6; color:#9ca3af; font-size:2rem;">📷</div>'}
             <span class="galeri-card-badge ${badgeClass}">${item.category}</span>
-            <span class="galeri-rw-badge">📍 ${rwText}</span>
+            <span class="galeri-rw-badge">📍 ${item.location}</span>
           </div>
           <div class="galeri-card-body">
             ${formattedDate ? `<div class="galeri-card-date">📅 ${formattedDate}</div>` : ''}
@@ -313,12 +331,12 @@
       galeriDataStore = rawGaleri
         .filter((item: any) => item["Tautan Foto (Google Drive)"] && item["Tautan Foto (Google Drive)"].trim() !== '-')
         .map((item: any) => ({
-          rw: String(item.RW || '').trim(),
+          location: String(item.Lokasi || '').trim() || 'Kelurahan',
           image: item["Tautan Foto (Google Drive)"],
           caption: item["Keterangan Foto"] || '',
           activity: item["Nama Kegiatan"] || 'Aktivitas Warga',
           date: item["Tanggal Kegiatan"] || '',
-          category: item["Kategori Kegiatan"] || 'Lainnya'
+          category: String(item["Kategori Kegiatan"] || '').trim() || 'Lainnya'
         }));
 
       renderGallery(galeriDataStore);
