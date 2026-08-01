@@ -17,50 +17,42 @@
         class="eyebrow"
         style="background:rgba(160,98,42,0.2);color:var(--clr-coffee-300);"
       >
-        ☕ Komoditas Unggulan
+        🌾 Komoditas Unggulan
       </span>
       <h2 class="section-title" id="komoditas-title">
-        Kekayaan Bumi <span>Dempo Makmur</span>
+        Potensi Komoditas <span>Kelurahan Dempo Makmur</span>
       </h2>
       <p class="section-desc" style="color:rgba(255,255,255,0.65);">
-        Dua komoditas andalan yang menjadi tulang punggung perekonomian dan identitas
-        kelurahan Dempo Makmur.
+        Kelurahan Dempo Makmur memiliki potensi pertanian dan perkebunan yang menjadi bagian dari kekuatan ekonomi masyarakat. Berada di wilayah Pagar Alam Utara, kawasan ini memiliki lingkungan yang mendukung berbagai kegiatan pertanian dan perkebunan.
       </p>
     </header>
 
     <div class="komoditas-grid">
 
       <article class="komoditas-card reveal reveal-delay-1" id="komoditas-kopi">
-        <span class="komoditas-emoji" aria-hidden="true">☕</span>
-        <h3 class="komoditas-name" id="komoditas-name-1">Kopi Dempo</h3>
+        <div class="komoditas-header">
+          <span class="komoditas-emoji" aria-hidden="true">☕</span>
+          <div>
+            <h3 class="komoditas-name" id="komoditas-name-1">1. Kopi Robusta</h3>
+            <div class="komoditas-subtitle">Kopi Robusta Pagar Alam</div>
+          </div>
+        </div>
         <p class="komoditas-desc" id="komoditas-desc-1">
-          Ditanam di ketinggian 1.000–1.600 mdpl, kopi Dempo dikenal dengan cita rasa
-          earthy, full body, dan sedikit cokelat alami yang khas.
+          Kopi robusta menjadi salah satu komoditas perkebunan unggulan di wilayah Pagar Alam. Komoditas ini memiliki karakter cita rasa yang kuat dan menjadi salah satu hasil perkebunan yang penting bagi masyarakat. Kopi robusta juga tercatat sebagai komoditas unggulan perkebunan di wilayah Pagar Alam Utara.
         </p>
-        <div class="komoditas-stat" id="komoditas-stat-1">±934 ha</div>
-        <div class="komoditas-stat-label">Luas Lahan Kopi</div>
       </article>
 
-      <article class="komoditas-card reveal reveal-delay-2" id="komoditas-teh">
-        <span class="komoditas-emoji" aria-hidden="true">🍵</span>
-        <h3 class="komoditas-name" id="komoditas-name-2">Teh Pegunungan</h3>
-        <p class="komoditas-desc" id="komoditas-desc-2">
-          Perkebunan teh membentang di lereng Gunung Dempo, menghasilkan teh premium
-          dengan aroma segar pegunungan dan kandungan antioksidan tinggi.
-        </p>
-        <div class="komoditas-stat" id="komoditas-stat-2">±1500 ha</div>
-        <div class="komoditas-stat-label">Luas Lahan Teh</div>
-      </article>
-
-      <article class="komoditas-card reveal reveal-delay-3" id="komoditas-toga-prod">
-        <span class="komoditas-emoji" aria-hidden="true">🌿</span>
-        <h3 class="komoditas-name" id="komoditas-name-3">Produk Olahan TOGA</h3>
+      <article class="komoditas-card reveal reveal-delay-2" id="komoditas-sayur">
+        <div class="komoditas-header">
+          <span class="komoditas-emoji" aria-hidden="true">🥬</span>
+          <div>
+            <h3 class="komoditas-name" id="komoditas-name-3">2. Hortikultura</h3>
+            <div class="komoditas-subtitle">Sayuran & Tanaman Pangan</div>
+          </div>
+        </div>
         <p class="komoditas-desc" id="komoditas-desc-3">
-          Inisiatif KKNT 103 Kelompok 26 membantu warga mengolah tanaman TOGA menjadi
-          minuman herbal, dan produk herbal yang siap dipasarkan.
+          Selain komoditas perkebunan, wilayah Pagar Alam juga dikenal dengan berbagai tanaman hortikultura seperti sayuran dan tanaman pangan. Komoditas hortikultura yang berkembang di wilayah Pagar Alam antara lain cabai, wortel, sawi, kubis, dan tomat.
         </p>
-        <div class="komoditas-stat" id="komoditas-stat-3">3 Jenis</div>
-        <div class="komoditas-stat-label">Produk Unggulan TOGA</div>
       </article>
 
     </div>
@@ -83,38 +75,114 @@
   </div>
 </section>
 
-<script>
-  const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQznAyNArNrqaHn02FbIfpgPDJqVXOFdUMMmWDEZWBjF4ScitXfWF0Jlyqm7JZNRCul985VwA_4HDw7Rj5aoBPrUy1_cuVK_BXkE6iXnBDPnd7261GElBPja8DNoaAoQLW1SshhwpPh0NmM00N-LPZQhFVwIxs2SI-Vw2jxYhNNsfMXiS5zsEFgurX0_1cs1uvX-7YuaM4y9W5XzIEBb8QGyIR3RT62abA-r-eALcVW3YlInQWxse6C64s5kti2GSFPc0GNSInyeIWwjgI6FC9hKW3sGg&lib=MSXxUATh27VwIW4n0YwFmBXdi3ZE4dG0b';
 
-  async function loadKomoditasData(): Promise<void> {
-    try {
-      const res = await fetch(API_URL);
-      if (!res.ok) return;
-      const payload = await res.json();
-      const data = Array.isArray(payload) ? payload[0] : (payload || {});
 
-      for (let i = 1; i <= 3; i++) {
-        const nameVal = data[`Komoditas_${i}`];
-        const descVal = data[`Deskripsi_Komoditas_${i}`];
-        const statVal = data[`Luas_Komoditas_${i}`];
-
-        if (nameVal && nameVal.trim() !== '') {
-          const elName = document.getElementById(`komoditas-name-${i}`);
-          if (elName) elName.textContent = nameVal;
-        }
-        if (descVal && descVal.trim() !== '') {
-          const elDesc = document.getElementById(`komoditas-desc-${i}`);
-          if (elDesc) elDesc.textContent = descVal;
-        }
-        if (statVal && statVal.trim() !== '') {
-          const elStat = document.getElementById(`komoditas-stat-${i}`);
-          if (elStat) elStat.textContent = statVal;
-        }
-      }
-    } catch (e) {
-      // Keep static defaults on error
-    }
+<style>
+  .komoditas-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
   }
 
-  loadKomoditasData();
-</script>
+  .komoditas-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-md);
+    transition: transform var(--transition-bounce), background var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  }
+
+  .komoditas-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255,255,255,0.07);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .komoditas-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .komoditas-emoji {
+    font-size: 2.2rem;
+    line-height: 1;
+    margin-bottom: 0;
+    display: block;
+    animation: floatSlow 7s ease-in-out infinite;
+  }
+
+  .komoditas-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.15rem;
+  }
+
+  .komoditas-subtitle {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--clr-coffee-300);
+  }
+
+  .komoditas-card#komoditas-sayur .komoditas-subtitle {
+    color: var(--clr-emerald-400);
+  }
+
+  .komoditas-desc {
+    font-size: 0.84rem;
+    color: rgba(255,255,255,0.68);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .komoditas-footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: var(--space-sm);
+    margin-top: auto;
+  }
+
+  .komoditas-stat {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--clr-emerald-400);
+    line-height: 1.2;
+  }
+
+  .komoditas-card#komoditas-kopi .komoditas-stat {
+    color: var(--clr-coffee-300);
+  }
+
+  .komoditas-stat-label {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.45);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  @media (max-width: 768px) {
+    .komoditas-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
