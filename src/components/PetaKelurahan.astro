@@ -107,8 +107,8 @@
         </div>
 
         <!-- Checklist Filter Overlay -->
-        <div class="peta-filter-overlay" id="peta-filter-overlay" style="display: none;">
-          <div class="peta-filter-header">
+        <div class="map-overlay-pois" id="peta-filter-overlay" style="display: none;">
+          <div class="poi-panel-title">
             <span>📍 Filter Lokasi</span>
           </div>
           <div class="peta-filter-body" id="peta-filter-checklist">
@@ -282,29 +282,33 @@
   .peta-map-wrap {
     position: relative; width: 100%; height: 540px; background: #e8f5e9;
   }
-  .peta-filter-overlay {
+  .map-overlay-pois {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 999;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    border: 1.5px solid rgba(5,150,105,.2);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(5, 150, 105, 0.2);
     border-radius: 1rem;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
-    padding: 0.8rem 1rem;
-    width: 210px;
+    padding: .75rem 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: 160px;
+    transition: all 0.3s ease;
     font-family: var(--font-body);
   }
-  .peta-filter-header {
-    font-size: 0.75rem;
+  .poi-panel-title {
+    font-size: .7rem;
     font-weight: 800;
-    color: #065f46;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(5,150,105,0.15);
-    padding-bottom: 0.25rem;
+    letter-spacing: .05em;
+    color: #065f46;
+    margin-bottom: .25rem;
+    border-bottom: 1.5px solid rgba(5, 150, 105, 0.15);
+    padding-bottom: .25rem;
     display: flex;
     align-items: center;
     gap: 0.35rem;
@@ -312,7 +316,7 @@
   .peta-filter-body {
     display: flex;
     flex-direction: column;
-    gap: 0.45rem;
+    gap: 0.35rem;
     max-height: 200px;
     overflow-y: auto;
     padding-right: 0.2rem;
@@ -327,24 +331,25 @@
     background: rgba(5,150,105,0.2);
     border-radius: 2px;
   }
-  .peta-filter-item {
+  .poi-checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.78rem;
+    gap: .4rem;
+    font-size: .62rem;
+    font-weight: 600;
     color: #374151;
     cursor: pointer;
     user-select: none;
-    font-weight: 600;
     transition: color 0.2s ease;
   }
-  .peta-filter-item input[type="checkbox"] {
-    accent-color: #059669;
-    width: 15px;
-    height: 15px;
+  .poi-checkbox-label input {
     cursor: pointer;
+    accent-color: #059669;
+    width: 14px;
+    height: 14px;
+    margin: 0;
   }
-  .peta-filter-item:hover {
+  .poi-checkbox-label:hover {
     color: #059669;
   }
   #leaflet-map { width: 100%; height: 100%; z-index: 1; }
@@ -810,11 +815,17 @@
         return '📍';
       }
 
+      // Helper to map category name to display name
+      function getCategoryDisplayName(kategori: string): string {
+        if (kategori === 'Fasilitas Kesehatan') return 'Faskes';
+        return kategori;
+      }
+
       checklistContainer.innerHTML = categories.map(cat => {
         return `
-          <label class="peta-filter-item">
+          <label class="poi-checkbox-label">
             <input type="checkbox" checked value="${cat}" class="peta-filter-checkbox" />
-            <span>${getFilterEmoji(cat)} ${cat}</span>
+            <span>${getFilterEmoji(cat)} ${getCategoryDisplayName(cat)}</span>
           </label>
         `;
       }).join('');
