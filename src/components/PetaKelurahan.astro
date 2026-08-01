@@ -107,13 +107,8 @@
         </div>
 
         <!-- Checklist Filter Overlay -->
-        <div class="map-overlay-pois" id="peta-filter-overlay" style="display: none;">
-          <div class="poi-panel-title">
-            <span>📍 Filter Lokasi</span>
-          </div>
-          <div class="peta-filter-body" id="peta-filter-checklist">
-            <!-- Dynamically populated checkboxes -->
-          </div>
+        <div class="map-overlay-pois" id="peta-filter-overlay" style="display: none; font-size: 12px">
+          <!-- Dynamically populated checkboxes -->
         </div>
 
         <div id="leaflet-map" aria-label="Peta interaktif tata ruang Kelurahan Dempo Makmur"></div>
@@ -299,6 +294,7 @@
     width: 160px;
     transition: all 0.3s ease;
     font-family: var(--font-body);
+    
   }
   .poi-panel-title {
     font-size: .7rem;
@@ -312,24 +308,6 @@
     display: flex;
     align-items: center;
     gap: 0.35rem;
-  }
-  .peta-filter-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 0.2rem;
-  }
-  .peta-filter-body::-webkit-scrollbar {
-    width: 4px;
-  }
-  .peta-filter-body::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .peta-filter-body::-webkit-scrollbar-thumb {
-    background: rgba(5,150,105,0.2);
-    border-radius: 2px;
   }
   .poi-checkbox-label {
     display: flex;
@@ -458,6 +436,14 @@
     .map-controls-wrap { margin-left: 0; padding-left: 0; width: 100%; }
     .peta-map-wrap { height: 400px; }
     .peta-legend { flex-direction: column; }
+    .map-overlay-pois {
+      top: auto;
+      bottom: 10px;
+      right: 10px;
+      padding: .5rem .75rem;
+      width: 130px;
+      gap: .35rem;
+    }
   }
 </style>
 
@@ -797,9 +783,8 @@
 
     /* Setup Checklist Filter UI */
     function setupChecklistFilter(dataList: any[]) {
-      const checklistContainer = document.getElementById('peta-filter-checklist');
       const overlayContainer = document.getElementById('peta-filter-overlay');
-      if (!checklistContainer || !overlayContainer) return;
+      if (!overlayContainer) return;
 
       // Extract unique categories
       const categories = Array.from(new Set(dataList.map(item => item.Kategori))).filter(Boolean) as string[];
@@ -821,19 +806,20 @@
         return kategori;
       }
 
-      checklistContainer.innerHTML = categories.map(cat => {
-        return `
+      overlayContainer.innerHTML = `
+        <div class="poi-panel-title">📍 Filter Lokasi</div>
+        ${categories.map(cat => `
           <label class="poi-checkbox-label">
             <input type="checkbox" checked value="${cat}" class="peta-filter-checkbox" />
             <span>${getFilterEmoji(cat)} ${getCategoryDisplayName(cat)}</span>
           </label>
-        `;
-      }).join('');
+        `).join('')}
+      `;
 
-      overlayContainer.style.display = 'block';
+      overlayContainer.style.display = 'flex';
 
       // Attach event listeners
-      checklistContainer.querySelectorAll('.peta-filter-checkbox').forEach(cb => {
+      overlayContainer.querySelectorAll('.peta-filter-checkbox').forEach(cb => {
         cb.addEventListener('change', updateMarkers);
       });
     }
