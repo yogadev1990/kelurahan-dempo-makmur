@@ -105,6 +105,17 @@
           <div class="peta-spinner" aria-hidden="true"></div>
           <p id="loading-text">Memuat data GIS Kelurahan Dempo Makmur…</p>
         </div>
+
+        <!-- Checklist Filter Overlay -->
+        <div class="peta-filter-overlay" id="peta-filter-overlay" style="display: none;">
+          <div class="peta-filter-header">
+            <span>📍 Filter Lokasi</span>
+          </div>
+          <div class="peta-filter-body" id="peta-filter-checklist">
+            <!-- Dynamically populated checkboxes -->
+          </div>
+        </div>
+
         <div id="leaflet-map" aria-label="Peta interaktif tata ruang Kelurahan Dempo Makmur"></div>
       </div>
 
@@ -267,8 +278,74 @@
   .badge-yellow { background: #fef3c7; color: #92400e; }
 
   /* ===== Map Container ===== */
+  /* ===== Map Container ===== */
   .peta-map-wrap {
     position: relative; width: 100%; height: 540px; background: #e8f5e9;
+  }
+  .peta-filter-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 999;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(5,150,105,.2);
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+    padding: 0.8rem 1rem;
+    width: 210px;
+    font-family: var(--font-body);
+  }
+  .peta-filter-header {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #065f46;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(5,150,105,0.15);
+    padding-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .peta-filter-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+  }
+  .peta-filter-body::-webkit-scrollbar {
+    width: 4px;
+  }
+  .peta-filter-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .peta-filter-body::-webkit-scrollbar-thumb {
+    background: rgba(5,150,105,0.2);
+    border-radius: 2px;
+  }
+  .peta-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: #374151;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+  .peta-filter-item input[type="checkbox"] {
+    accent-color: #059669;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+  .peta-filter-item:hover {
+    color: #059669;
   }
   #leaflet-map { width: 100%; height: 100%; z-index: 1; }
   .peta-map-overlay-loading {
@@ -328,15 +405,19 @@
 
   /* ===== Leaflet Custom Markers & Popups ===== */
   :global(.custom-gis-marker) {
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; color: white; font-weight: 800; font-size: 1rem;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    line-height: 0 !important;
+    border-radius: 50%; color: white; font-weight: 800; font-size: 1.15rem;
     box-shadow: 0 3px 10px rgba(0,0,0,.3); border: 2px solid white;
     transition: transform .2s ease;
   }
   :global(.custom-gis-marker:hover) { transform: scale(1.2); }
   :global(.marker-puskeskel) { background: linear-gradient(135deg, #ef4444, #dc2626); }
   :global(.marker-sekolah)   { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-  :global(.marker-gedung)    { background: linear-gradient(135deg, #f59e0b, #d97706); font-size: .75rem; }
+  :global(.marker-gedung)    { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
   :global(.dempo-popup .leaflet-popup-content-wrapper) {
     border-radius: .875rem !important;
@@ -349,6 +430,9 @@
   :global(.popup-tag) {
     font-size: .6rem; font-weight: 700; text-transform: uppercase;
     letter-spacing: .08em; opacity: .9; margin-bottom: .2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
   }
   :global(.popup-title) { font-size: 1.05rem; font-weight: 800; line-height: 1.25; }
   :global(.popup-body-gis) { padding: .75rem 1rem .875rem; background: white; }
@@ -378,7 +462,7 @@
 <script>
 /* ============================================================
    Peta Kelurahan Dempo Makmur — Leaflet GIS Interactive
-   Source: public/kelurahan-dempo-makmur.geojson
+   Source: API (TEMPAT_UMUM) & public/kelurahan-dempo-makmur.geojson
    ============================================================ */
 (function () {
 
@@ -498,32 +582,122 @@
     let currentFilter = 'all';
     let geojsonLayer: any = null;
     let selectedLayer: any = null;
+    
+    // Layer group for API markers
+    const markerGroup = L.layerGroup().addTo(map);
+    
+    // Data store for API markers
+    let tempatUmumData: any[] = [];
 
-    /* Custom DivIcon for points */
-    function createPointIcon(feature: any) {
-      const { title } = getFeatureInfo(feature);
-      if (title.includes('Puskeskel')) {
-        return L.divIcon({
-          className: 'custom-gis-marker marker-puskeskel',
-          html: '🏥',
-          iconSize: [32, 32],
-          iconAnchor: [16, 16],
-        });
+    // Helper to extract direct image link from Google Drive url
+    function getGoogleDriveDirectLink(url: string): string {
+      if (!url) return '';
+      let fileId = '';
+      const match = url.match(/\/d\/([-\w]{25,})/);
+      if (match && match[1]) {
+        fileId = match[1];
+      } else {
+        const idMatch = url.match(/[?&]id=([-\w]{25,})/);
+        if (idMatch && idMatch[1]) {
+          fileId = idMatch[1];
+        }
       }
-      if (title.includes('SD Negeri')) {
-        return L.divIcon({
-          className: 'custom-gis-marker marker-sekolah',
-          html: '🏫',
-          iconSize: [32, 32],
-          iconAnchor: [16, 16],
-        });
+      if (fileId) {
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
       }
+      return url;
+    }
+
+    // Icon mapping for Kategori
+    function createGisMarkerIcon(kategori: string) {
+      let emoji = '📍';
+      let className = 'marker-gedung';
+      
+      if (kategori === 'Sekolah') {
+        emoji = '🏫';
+        className = 'marker-sekolah';
+      } else if (kategori === 'Fasilitas Kesehatan') {
+        emoji = '🏥';
+        className = 'marker-puskeskel';
+      } else if (kategori === 'Pemukiman') {
+        emoji = '🏡';
+        className = 'marker-gedung';
+      } else if (kategori === 'Kantor Lurah') {
+        emoji = '🏢';
+        className = 'marker-gedung';
+      }
+
       return L.divIcon({
-        className: 'custom-gis-marker marker-gedung',
-        html: '🏢',
-        iconSize: [22, 22],
-        iconAnchor: [11, 11],
+        className: `custom-gis-marker ${className}`,
+        html: emoji,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
       });
+    }
+
+    // Build Popup HTML for API markers
+    function buildApiPopupHtml(item: any) {
+      const name = item["Nama Tempat / Produk"] || "Objek Wisata";
+      const category = item["Kategori"] || "Fasilitas";
+      const desc = item["Deskripsi Singkat"] || "";
+      const locRw = item["Lokasi / RW"] || "";
+      const coords = item["Titik Koordinat (Lat, Lng)"] || "";
+      const photoUrl = item["Tautan Foto (Google Drive)"] || "";
+
+      let categoryTag = `📌 ${category}`;
+      let headerGradient = 'linear-gradient(135deg, #059669, #10b981)';
+
+      if (category === 'Fasilitas Kesehatan') {
+        categoryTag = '🏥 Fasilitas Kesehatan';
+        headerGradient = 'linear-gradient(135deg, #ef4444, #b91c1c)';
+      } else if (category === 'Sekolah') {
+        categoryTag = '🏫 Fasilitas Pendidikan';
+        headerGradient = 'linear-gradient(135deg, #2563eb, #1e40af)';
+      } else if (category === 'Pemukiman') {
+        categoryTag = '🏡 Area Permukiman';
+        headerGradient = 'linear-gradient(135deg, #059669, #047857)';
+      } else if (category === 'Kantor Lurah') {
+        categoryTag = '🏢 Kantor Kelurahan';
+        headerGradient = 'linear-gradient(135deg, #d97706, #b45309)';
+      }
+
+      const directImg = getGoogleDriveDirectLink(photoUrl);
+
+      return `
+        <div>
+          <div class="popup-header-gis" style="background: ${headerGradient};">
+            <div class="popup-tag">${categoryTag}</div>
+            <div class="popup-title">${name}</div>
+          </div>
+          <div class="popup-body-gis">
+            ${directImg && directImg.trim() !== '-' && directImg.trim() !== '' ? `
+            <div style="width: 100%; height: 120px; overflow: hidden; border-radius: 4px; margin-bottom: 0.5rem; background: #e5e7eb;">
+              <img src="${directImg}" style="width:100%; height:100%; object-fit:cover;" />
+            </div>` : ''}
+            <div class="popup-field-row">
+              <span class="popup-field-lbl">Nama Tempat</span>
+              <span class="popup-field-val">${name}</span>
+            </div>
+            <div class="popup-field-row">
+              <span class="popup-field-lbl">Kategori</span>
+              <span class="popup-field-val">${category}</span>
+            </div>
+            ${desc && desc.trim() !== '-' && desc.trim() !== '' ? `
+            <div class="popup-field-row">
+              <span class="popup-field-lbl">Keterangan</span>
+              <span class="popup-field-val">${desc}</span>
+            </div>` : ''}
+            ${locRw && locRw.trim() !== '-' && locRw.trim() !== '' ? `
+            <div class="popup-field-row">
+              <span class="popup-field-lbl">Lokasi / RW</span>
+              <span class="popup-field-val">${locRw}</span>
+            </div>` : ''}
+            <div class="popup-field-row">
+              <span class="popup-field-lbl">Koordinat</span>
+              <span class="popup-field-val">${coords}</span>
+            </div>
+          </div>
+        </div>`;
     }
 
     /* Style for features */
@@ -561,10 +735,13 @@
       return { color: '#059669', fillColor: '#a7f3d0', weight: 1.5, fillOpacity: 0.25 };
     }
 
-    /* Filter predicate */
+    /* Filter predicate for GeoJSON layers */
     function filterFeature(feature: any): boolean {
+      // Exclude points from GeoJSON entirely, we only display them from the API
+      if (feature.geometry.type === 'Point') return false;
+
       if (currentFilter === 'all') return true;
-      const { title, remark, type } = getFeatureInfo(feature);
+      const { title, remark } = getFeatureInfo(feature);
 
       if (currentFilter === 'permukiman') {
         return remark === 'Permukiman dan Tempat Kegiatan' || !!PERMUKIMAN_COLORS[title];
@@ -573,9 +750,81 @@
         return remark === 'Sawah' || remark === 'Perkebunan/Kebun';
       }
       if (currentFilter === 'fasilitas') {
-        return type === 'Point' || remark.includes('Jalan');
+        return remark.includes('Jalan');
       }
       return true;
+    }
+
+    /* Update API Markers */
+    function updateMarkers() {
+      // Clear existing markers
+      markerGroup.clearLayers();
+
+      // Get checked categories
+      const checkedCheckboxes = document.querySelectorAll('.peta-filter-checkbox:checked');
+      const checkedCategories = Array.from(checkedCheckboxes).map((cb: any) => cb.value);
+
+      tempatUmumData.forEach(item => {
+        const category = item.Kategori || 'Lainnya';
+        if (!checkedCategories.includes(category)) return;
+
+        const coordsStr = item["Titik Koordinat (Lat, Lng)"];
+        if (!coordsStr || coordsStr.trim() === '-' || coordsStr.trim() === '') return;
+
+        const parts = coordsStr.split(',');
+        if (parts.length < 2) return;
+
+        const lat = parseFloat(parts[0].trim());
+        const lng = parseFloat(parts[1].trim());
+
+        if (isNaN(lat) || isNaN(lng)) return;
+
+        const marker = L.marker([lat, lng], { icon: createGisMarkerIcon(category) });
+        marker.bindPopup(() => buildApiPopupHtml(item), {
+          className: 'dempo-popup',
+          maxWidth: 300,
+          autoPan: true,
+        });
+
+        markerGroup.addLayer(marker);
+      });
+    }
+
+    /* Setup Checklist Filter UI */
+    function setupChecklistFilter(dataList: any[]) {
+      const checklistContainer = document.getElementById('peta-filter-checklist');
+      const overlayContainer = document.getElementById('peta-filter-overlay');
+      if (!checklistContainer || !overlayContainer) return;
+
+      // Extract unique categories
+      const categories = Array.from(new Set(dataList.map(item => item.Kategori))).filter(Boolean) as string[];
+
+      if (categories.length === 0) return;
+
+      // Helper to get category emoji for checklist filter
+      function getFilterEmoji(kategori: string): string {
+        if (kategori === 'Sekolah') return '🏫';
+        if (kategori === 'Fasilitas Kesehatan') return '🏥';
+        if (kategori === 'Pemukiman') return '🏡';
+        if (kategori === 'Kantor Lurah') return '🏢';
+        return '📍';
+      }
+
+      checklistContainer.innerHTML = categories.map(cat => {
+        return `
+          <label class="peta-filter-item">
+            <input type="checkbox" checked value="${cat}" class="peta-filter-checkbox" />
+            <span>${getFilterEmoji(cat)} ${cat}</span>
+          </label>
+        `;
+      }).join('');
+
+      overlayContainer.style.display = 'block';
+
+      // Attach event listeners
+      checklistContainer.querySelectorAll('.peta-filter-checkbox').forEach(cb => {
+        cb.addEventListener('change', updateMarkers);
+      });
     }
 
     /* Build interactive legend */
@@ -602,25 +851,47 @@
       container.querySelectorAll('.peta-legend-item').forEach(el => {
         el.addEventListener('click', () => {
           const target = el.getAttribute('data-legend') ?? '';
-          if (!geojsonLayer) return;
-
           let bounds: any = L.latLngBounds([]);
           let found = false;
 
-          geojsonLayer.eachLayer((layer: any) => {
-            const { title, remark } = getFeatureInfo(layer.feature);
-            let match = false;
+          // 1. Scan GeoJSON layers
+          if (geojsonLayer) {
+            geojsonLayer.eachLayer((layer: any) => {
+              const { title, remark } = getFeatureInfo(layer.feature);
+              let match = false;
 
-            if (target === 'Fasilitas' && (title.includes('Puskeskel') || title.includes('SD') || layer.feature.geometry.type === 'Point')) match = true;
-            else if (target === 'Jalan' && remark.includes('Jalan')) match = true;
-            else if (target === 'Sawah' && (remark === 'Sawah' || remark === 'Perkebunan/Kebun')) match = true;
-            else if (title === target || (target === 'Dempomakmur' && title.includes('Dempomakmur'))) match = true;
+              if (target === 'Jalan' && remark.includes('Jalan')) match = true;
+              else if (target === 'Sawah' && (remark === 'Sawah' || remark === 'Perkebunan/Kebun')) match = true;
+              else if (title === target || (target === 'Dempomakmur' && title.includes('Dempomakmur'))) match = true;
 
-            if (match) {
-              found = true;
-              if (layer.getBounds) {
-                bounds.extend(layer.getBounds());
-              } else if (layer.getLatLng) {
+              if (match) {
+                found = true;
+                if (layer.getBounds) {
+                  bounds.extend(layer.getBounds());
+                } else if (layer.getLatLng) {
+                  bounds.extend(layer.getLatLng());
+                }
+              }
+            });
+          }
+
+          // 2. Scan API markers
+          markerGroup.eachLayer((layer: any) => {
+            if (layer.getPopup && layer.getLatLng) {
+              const popupContent = layer.getPopup().getContent();
+              const contentStr = typeof popupContent === 'function' ? popupContent() : String(popupContent);
+              
+              let match = false;
+              if (target === 'Fasilitas' && (contentStr.includes('Fasilitas Kesehatan') || contentStr.includes('Sekolah') || contentStr.includes('Pendidikan'))) {
+                match = true;
+              } else if (target === 'Dempomakmur' && contentStr.includes('Kantor Kelurahan')) {
+                match = true;
+              } else if (contentStr.includes(target)) {
+                match = true;
+              }
+
+              if (match) {
+                found = true;
                 bounds.extend(layer.getLatLng());
               }
             }
@@ -633,110 +904,138 @@
       });
     }
 
-    /* Load GeoJSON */
-    fetch('/kelurahan-dempo-makmur.geojson')
-      .then(r => {
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw4l44YbYf-GNZFFau0vUPdX9kzgHuRKSk0ZNjCLNrU17BYXANM-WIEMm_Z-BL0Xkow/exec';
+
+    /* Fetch API and GeoJSON in parallel */
+    Promise.all([
+      fetch(API_URL).then(r => r.json()).catch(err => {
+        console.error('Failed to fetch tempat umum API:', err);
+        return null;
+      }),
+      fetch('/kelurahan-dempo-makmur.geojson').then(r => {
         if (!r.ok) throw new Error(`HTTP error ${r.status}`);
         return r.json();
       })
-      .then(data => {
-        geojsonLayer = L.geoJSON(data, {
-          filter: filterFeature,
-          style: featureStyle,
-          pointToLayer: (feature: any, latlng: any) => {
-            return L.marker(latlng, { icon: createPointIcon(feature) });
-          },
-          onEachFeature: (feature: any, layer: any) => {
-            layer.bindPopup(() => buildPopupHtml(feature), {
-              className: 'dempo-popup',
-              maxWidth: 300,
-              autoPan: true,
-            });
+    ])
+    .then(([apiRes, geoJsonData]) => {
+      // 1. Process API response
+      if (apiRes && apiRes.TEMPAT_UMUM) {
+        tempatUmumData = apiRes.TEMPAT_UMUM;
+        setupChecklistFilter(tempatUmumData);
+        updateMarkers();
 
-            if (feature.geometry.type !== 'Point') {
-              layer.on('mouseover', () => {
-                layer.setStyle({ fillOpacity: 0.8, weight: 3 });
-                layer.bringToFront();
-              });
-              layer.on('mouseout', () => {
-                if (selectedLayer !== layer) {
-                  layer.setStyle(featureStyle(feature));
-                }
-              });
-              layer.on('click', () => {
-                if (selectedLayer && selectedLayer !== layer) {
-                  selectedLayer.setStyle(featureStyle(selectedLayer.feature));
-                }
-                selectedLayer = layer;
-                layer.setStyle({ fillOpacity: 0.85, weight: 3.5 });
-              });
-            }
-          },
-        }).addTo(map);
-
-        if (geojsonLayer.getBounds().isValid()) {
-          map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+        const statusText = document.getElementById('api-status-text');
+        if (statusText) {
+          statusText.textContent = 'API Terkoneksi (Live)';
+          statusText.style.color = '#059669';
         }
+      }
 
-        populateLegend();
-        if (loading) setTimeout(() => loading.classList.add('hidden'), 300);
-
-        /* Filter toggle event listeners */
-        document.querySelectorAll('.layer-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const filter = btn.getAttribute('data-filter') || 'all';
-            currentFilter = filter;
-
-            document.querySelectorAll('.layer-btn').forEach(b => {
-              b.classList.remove('active');
-              b.setAttribute('aria-pressed', 'false');
-            });
-            btn.classList.add('active');
-            btn.setAttribute('aria-pressed', 'true');
-
-            if (geojsonLayer) {
-              map.removeLayer(geojsonLayer);
-              geojsonLayer = L.geoJSON(data, {
-                filter: filterFeature,
-                style: featureStyle,
-                pointToLayer: (f: any, ll: any) => L.marker(ll, { icon: createPointIcon(f) }),
-                onEachFeature: (f: any, l: any) => {
-                  l.bindPopup(() => buildPopupHtml(f), { className: 'dempo-popup', maxWidth: 300, autoPan: true });
-                },
-              }).addTo(map);
-            }
+      // 2. Render GeoJSON polygons and lines
+      geojsonLayer = L.geoJSON(geoJsonData, {
+        filter: filterFeature,
+        style: featureStyle,
+        onEachFeature: (feature: any, layer: any) => {
+          layer.bindPopup(() => buildPopupHtml(feature), {
+            className: 'dempo-popup',
+            maxWidth: 300,
+            autoPan: true,
           });
-        });
 
-        /* Basemap toggle event listeners */
-        document.querySelectorAll('.basemap-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const key = btn.getAttribute('data-layer') as keyof typeof TILE_LAYERS;
-            const cfg = TILE_LAYERS[key];
-            if (!cfg) return;
-
-            map.removeLayer(activeTile);
-            activeTile = L.tileLayer(cfg.url, {
-              attribution: cfg.attr,
-              maxZoom: 19,
-              subdomains: cfg.sub,
-            }).addTo(map);
-
-            if (geojsonLayer) geojsonLayer.bringToFront();
-
-            document.querySelectorAll('.basemap-btn').forEach(b => {
-              b.classList.remove('active');
-              b.setAttribute('aria-pressed', 'false');
+          if (feature.geometry.type !== 'Point') {
+            layer.on('mouseover', () => {
+              layer.setStyle({ fillOpacity: 0.8, weight: 3 });
+              layer.bringToFront();
             });
-            btn.classList.add('active');
-            btn.setAttribute('aria-pressed', 'true');
-          });
-        });
-      })
-      .catch(err => {
-        console.error('Error loading GeoJSON:', err);
-        if (loading) loading.innerHTML = '<p style="color:#dc2626">⚠️ Gagal memuat data GIS peta.</p>';
+            layer.on('mouseout', () => {
+              if (selectedLayer !== layer) {
+                layer.setStyle(featureStyle(feature));
+              }
+            });
+            layer.on('click', () => {
+              if (selectedLayer && selectedLayer !== layer) {
+                selectedLayer.setStyle(featureStyle(selectedLayer.feature));
+              }
+              selectedLayer = layer;
+              layer.setStyle({ fillOpacity: 0.85, weight: 3.5 });
+            });
+          }
+        },
+      }).addTo(map);
+
+      // Fit bounds combining layers
+      let bounds = L.latLngBounds([]);
+      if (geojsonLayer && geojsonLayer.getBounds().isValid()) {
+        bounds.extend(geojsonLayer.getBounds());
+      }
+      markerGroup.eachLayer((layer: any) => {
+        if (layer.getLatLng) {
+          bounds.extend(layer.getLatLng());
+        }
       });
+
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [30, 30] });
+      }
+
+      populateLegend();
+      if (loading) setTimeout(() => loading.classList.add('hidden'), 300);
+
+      /* Filter toggle event listeners for GeoJSON Layer */
+      document.querySelectorAll('.layer-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-filter') || 'all';
+          currentFilter = filter;
+
+          document.querySelectorAll('.layer-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+
+          if (geojsonLayer) {
+            map.removeLayer(geojsonLayer);
+            geojsonLayer = L.geoJSON(geoJsonData, {
+              filter: filterFeature,
+              style: featureStyle,
+              onEachFeature: (f: any, l: any) => {
+                l.bindPopup(() => buildPopupHtml(f), { className: 'dempo-popup', maxWidth: 300, autoPan: true });
+              },
+            }).addTo(map);
+          }
+        });
+      });
+
+      /* Basemap toggle event listeners */
+      document.querySelectorAll('.basemap-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-layer') as keyof typeof TILE_LAYERS;
+          const cfg = TILE_LAYERS[key];
+          if (!cfg) return;
+
+          map.removeLayer(activeTile);
+          activeTile = L.tileLayer(cfg.url, {
+            attribution: cfg.attr,
+            maxZoom: 19,
+            subdomains: cfg.sub,
+          }).addTo(map);
+
+          if (geojsonLayer) geojsonLayer.bringToFront();
+
+          document.querySelectorAll('.basemap-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+        });
+      });
+    })
+    .catch(err => {
+      console.error('Error loading GIS maps:', err);
+      if (loading) loading.innerHTML = '<p style="color:#dc2626">⚠️ Gagal memuat data GIS peta.</p>';
+    });
   }
 
   if (document.readyState === 'loading') {
